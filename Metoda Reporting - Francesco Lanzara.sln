@@ -1,0 +1,64 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36203.30
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer", "AuthServer\AuthServer.csproj", "{8C54B43A-B299-845E-30B8-D1618E507BD4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda Reporting API", "RestAPI\Metoda Reporting API.csproj", "{A9537DDC-82A3-6108-1EA2-A112DABB5C4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda Reporting Web App", "MvcClient\Metoda Reporting Web App.csproj", "{5DB16C9A-E023-B36F-DF16-41D7CCB5800F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "Gateway\ApiGateway.csproj", "{DED9E068-6BFA-DBE8-AD26-1AA467FFE1D9}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
+EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Global", "..\Globals\Global.shproj", "{C9CC362E-DFA3-4605-B544-9A86E7F0976F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserDocuments", "..\UserDocuments\UserDocuments.csproj", "{A1C8866A-3146-49E3-9739-E0690B113989}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C54B43A-B299-845E-30B8-D1618E507BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C54B43A-B299-845E-30B8-D1618E507BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C54B43A-B299-845E-30B8-D1618E507BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C54B43A-B299-845E-30B8-D1618E507BD4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A9537DDC-82A3-6108-1EA2-A112DABB5C4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A9537DDC-82A3-6108-1EA2-A112DABB5C4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A9537DDC-82A3-6108-1EA2-A112DABB5C4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A9537DDC-82A3-6108-1EA2-A112DABB5C4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5DB16C9A-E023-B36F-DF16-41D7CCB5800F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5DB16C9A-E023-B36F-DF16-41D7CCB5800F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5DB16C9A-E023-B36F-DF16-41D7CCB5800F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5DB16C9A-E023-B36F-DF16-41D7CCB5800F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DED9E068-6BFA-DBE8-AD26-1AA467FFE1D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DED9E068-6BFA-DBE8-AD26-1AA467FFE1D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DED9E068-6BFA-DBE8-AD26-1AA467FFE1D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DED9E068-6BFA-DBE8-AD26-1AA467FFE1D9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1C8866A-3146-49E3-9739-E0690B113989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1C8866A-3146-49E3-9739-E0690B113989}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1C8866A-3146-49E3-9739-E0690B113989}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1C8866A-3146-49E3-9739-E0690B113989}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {D9057604-1D2D-45BC-9F74-66223ACC1FAE}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		..\Globals\Globals.projitems*{5db16c9a-e023-b36f-df16-41d7ccb5800f}*SharedItemsImports = 5
+		..\Globals\Globals.projitems*{8c54b43a-b299-845e-30b8-d1618e507bd4}*SharedItemsImports = 5
+		..\Globals\Globals.projitems*{a9537ddc-82a3-6108-1ea2-a112dabb5c4e}*SharedItemsImports = 5
+		..\Globals\Globals.projitems*{c9cc362e-dfa3-4605-b544-9a86e7f0976f}*SharedItemsImports = 13
+		..\Globals\Globals.projitems*{ded9e068-6bfa-dbe8-ad26-1aa467ffe1d9}*SharedItemsImports = 5
+	EndGlobalSection
+EndGlobal

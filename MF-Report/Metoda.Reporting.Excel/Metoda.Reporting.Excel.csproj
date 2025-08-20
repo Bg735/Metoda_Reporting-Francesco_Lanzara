@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	
+  <PropertyGroup>
+	<TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+	
+  <ItemGroup>
+	<PackageReference Include="NPOI" Version="2.6.0" />
+  </ItemGroup>
+	
+  <ItemGroup>
+	<ProjectReference Include="..\Metoda.Reporting.Common\Metoda.Reporting.Common.csproj" />
+  </ItemGroup>
+	
+  <PropertyGroup Label="Globals">
+	<SccProjectName>SAK</SccProjectName>
+	<SccProvider>SAK</SccProvider>
+	<SccAuxPath>SAK</SccAuxPath>
+	<SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+	
+  <PropertyGroup>
+	<LangVersion>latest</LangVersion>
+	<AssemblyVersion>1.0.1.0</AssemblyVersion>
+	<FileVersion>1.0.1.0</FileVersion>
+  </PropertyGroup>
+	
+</Project>

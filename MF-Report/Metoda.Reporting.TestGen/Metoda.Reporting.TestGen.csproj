@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <OutputType>WinExe</OutputType>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImportWindowsDesktopTargets>true</ImportWindowsDesktopTargets>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Metoda.Reporting.Chart\Metoda.Reporting.Chart.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Common\Metoda.Reporting.Common.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Excel\Metoda.Reporting.Excel.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Models\Metoda.Reporting.Models.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Pdf\Metoda.Reporting.Pdf.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CSharp" Version="4.7.0" />
+  </ItemGroup>
+	
+</Project>

@@ -1,0 +1,19 @@
+{
+    "profiles": {
+        "Metoda Reporting API": {
+            "commandName": "Project"
+        },
+        "Container (Dockerfile)": {
+            "commandName": "Docker",
+            "launchUrl": "http://localhost:8080",
+            "environmentVariables": {
+                "ASPNETCORE_URLS": "http://+:8080"
+            },
+            "publishAllPorts": true,
+            "useSSL": false,
+            "ports": {
+                "8080": "8080"
+            }
+        }
+    }
+}

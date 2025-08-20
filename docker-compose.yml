@@ -1,0 +1,71 @@
+services:
+  gateway:
+    user:  "ContainerAdministrator"
+    build:
+      context: ./Gateway
+    ports:
+      - "8080:8080"
+    depends_on:
+      - authserver
+      - restapi
+      - mvcclient
+    networks:
+      - appnet
+    environment:
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+    volumes:
+      - dpkeys:C:\dpkeys
+
+  authserver:
+    user:  "ContainerAdministrator"
+    build:
+      context: ./AuthServer
+    expose:
+      - "8080"
+    volumes:
+      - ./AuthServer/keys:C:\app\data-keys
+    networks:
+      - appnet
+    environment:
+      - ASPNETCORE_FORWARDEDHEADERS_ENABLED=true
+
+  restapi:
+    user:  "ContainerAdministrator"
+    build:
+      context: ./RestApi
+    expose:
+      - "8080"
+    networks:
+      - appnet
+    volumes:
+      - dpkeys:C:\dpkeys
+      - docstorage:C:\app\docstorage
+      - docmetadatadb:C:\app\appdata
+    environment:
+      - Storage__Root=/app/storage
+      - ConnectionStrings__Default=Data Source=/app/appdata/docmetadata.db
+
+  mvcclient:
+    user:  "ContainerAdministrator"
+    build:
+      context: ./MvcClient
+    expose:
+      - "8080"
+    networks:
+      - appnet    
+    volumes:
+      - dpkeys:C:\dpkeys
+      - docstorage:C:\app\docstorage
+      - docmetadatadb:C:\app\appdata
+    environment:
+      - Storage__Root=/app/storage
+      - ConnectionStrings__Default=Data Source=/app/appdata/docmetadata.db
+
+networks:
+  appnet:
+    driver: nat
+
+volumes:
+  dpkeys:
+  docstorage:  
+  docmetadatadb:  

@@ -1,0 +1,20 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Metoda.Reporting.Chart\Metoda.Reporting.Chart.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Common\Metoda.Reporting.Common.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Excel\Metoda.Reporting.Excel.csproj" />
+    <ProjectReference Include="..\Metoda.Reporting.Pdf\Metoda.Reporting.Pdf.csproj" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+  <PropertyGroup>
+    <LangVersion>latest</LangVersion>
+  </PropertyGroup>
+</Project>

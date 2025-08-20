@@ -1,0 +1,37 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Metoda_Report_API</RootNamespace>
+    <DockerDefaultTargetOS>Windows</DockerDefaultTargetOS>
+    <UserSecretsId>5227698b-02b6-4847-a966-927801602742</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="itext7" Version="7.2.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.18" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Metoda.Reporting.Chart">
+      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Chart.dll</HintPath>
+    </Reference>
+    <Reference Include="Metoda.Reporting.Common">
+      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="Metoda.Reporting.Excel">
+      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Excel.dll</HintPath>
+    </Reference>
+    <Reference Include="Metoda.Reporting.Models">
+      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Models.dll</HintPath>
+    </Reference>
+    <Reference Include="Metoda.Reporting.Pdf">
+      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Pdf.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>

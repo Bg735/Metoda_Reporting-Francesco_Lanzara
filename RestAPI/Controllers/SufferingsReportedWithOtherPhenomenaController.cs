@@ -1,0 +1,63 @@
+﻿using iText.Layout;
+using Metoda.Reporting.Models.Reports.SufferingsReportedWithOtherPhenomena;
+using Metoda_Report_API.Controllers.Contracts;
+using Metoda_Report_Web_App___Francesco_Lanzara.Services;
+using Microsoft.AspNetCore.Mvc;
+using NPOI.SS.UserModel;
+using System.Net;
+
+namespace Metoda_Report_API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SufferingsReportedWithOtherPhenomenaController : FilePersistentApiController
+    {
+        private static readonly string reportCategory = "SOFFERENZE SEGNALATE CON ALTRI CUBI";
+
+        public SufferingsReportedWithOtherPhenomenaController(DocumentStorageService storage) : base(storage)
+        {
+        }
+
+        [HttpGet("pdf")]
+        public async Task<IActionResult> GetPdf()
+        {
+            try
+            {
+                return await GenerateAndSavePdfReportAsync<
+                    SufferingsReportedWithOtherPhenomenaPdfReportBuilder,
+                    SufferingsReportedWithOtherPhenomenaPdfReport,
+                    Document
+                >(
+                    new SufferingsReportedWithOtherPhenomenaPdfReportBuilder(),
+                    SufferingsReportedWithOtherPhenomenaFakeData.FillBuilderByData,
+                    reportCategory
+                );
+            }
+            catch (Exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+
+        [HttpGet("xlsm")]
+        public async Task<IActionResult> GetExcel()
+        {
+            try
+            {
+                return await GenerateAndSaveExcelReportAsync<
+                    SufferingsReportedWithOtherPhenomenaExcelReportBuilder,
+                    SufferingsReportedWithOtherPhenomenaExcelReport,
+                    ISheet
+                >(
+                    new SufferingsReportedWithOtherPhenomenaExcelReportBuilder(),
+                    SufferingsReportedWithOtherPhenomenaFakeData.FillBuilderByData,
+                    reportCategory
+                );
+            }
+            catch (Exception)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError);
+            }
+        }
+    }
+}

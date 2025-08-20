@@ -1,0 +1,61 @@
+﻿@{
+	ViewData["Title"] = "Generazione Report";
+}
+
+<div class="container py-4">
+	<div class="row mb-4">
+		<div class="col text-center">
+			<h1 class="display-5 mb-3">Servizio di Generazione Report</h1>
+			<p class="lead">Seleziona il report che desideri generare:</p>
+		</div>
+	</div>
+	<div class="row row-cols-1 row-cols-md-2 g-4">
+
+		@* Lista dei report *@
+		@{
+			var reports = new[]
+			{
+				new { Title = "Report Analitico per Controparte", Name = "MonthlyReport" },
+				new { Title = "Segnalazione Inadempienze Probabili per Soggetto", Name = "ReportingUnlikelyToPayBySubject" },
+				new { Title = "Garanzie Connesse con Operazioni di Natura Commerciale", Name = "GuaranteesConnectedWithOperationsOfACommercialNature" },
+				new { Title = "Sofferenze Segnalate con Altri Cubi", Name = "SufferingsReportedWithOtherPhenomena" },
+				new { Title = "Accordato Maggiore di Utilizzato o Senza Utilizzato", Name = "GrantedMajorUsedOrNonUsed" },
+				new { Title = "Altri Crediti ma Deteriorati", Name = "OtherCreditsButImpaired" },
+				new { Title = "Sconfinamenti Operativi", Name = "Trespassing" },
+				new { Title = "Assenza Censito Collegato", Name = "AbsenceRegisteredConnected" },
+				new { Title = "Accordato Diverso da Utilizzato per Operazioni in Pool", Name = "AgreedOtherThanUsedForPooledTransactions" },
+				new { Title = "Riepilogo Prospetto Andamentale", Name = "SummaryOfPerformanceStatement" },
+				new { Title = "Incongruenza tra durata originaria e residua", Name = "InconsistencyBetweenOriginalAndResidualDuration"},
+				new { Title = "Sconfinamenti operativi - analitico", Name = System.IO.Path.Combine("OperationalOverruns","Analitics")},
+				new { Title = "Sconfinamenti operativi - sintetico", Name = System.IO.Path.Combine("OperationalOverruns","Sintetics")},
+				new { Title = "Presenza di pool capofila e non pool totale o viceversa", Name = "PresenceOfLeadPoolAndNotTotalPoolOrViceVersa"},
+				new { Title = "Tipo attività incompatibile con rischi a scadenza", Name = "TypeOfActivityIncompatibleWithRisksAtMaturity"},
+				};
+			var formats = new[]
+			{
+				new { Label = "PDF", Ext = "pdf", Css = "btn-primary" },
+				new { Label = "Excel", Ext = "xlsm", Css = "btn-success" }
+				};
+		}
+		@foreach (var report in reports)
+		{
+			<div class="col">
+				<div class="card shadow-sm h-100">
+					<div class="card-body">
+						<h5 class="card-title">@report.Title</h5>
+						<div class="d-flex gap-2">
+							@foreach (var format in formats)
+							{
+								<form asp-controller="Home" asp-action="CallApi" method="get" target="_blank">
+									<input type="hidden" name="docCategory" value="@report.Name" />
+									<input type="hidden" name="format" value="@format.Ext" />
+									<button type="submit" class="btn @format.Css">@format.Label</button>
+								</form>
+							}
+						</div>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+</div>
