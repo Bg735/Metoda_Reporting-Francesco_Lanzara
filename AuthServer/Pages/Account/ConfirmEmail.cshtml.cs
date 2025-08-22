@@ -2,13 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 #nullable disable
 
+using AuthServer.Pages.Account;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using System.Text;
 
-namespace Metoda_Report_Web_App___Francesco_Lanzara.Pages.Account
+namespace AuthServer.Pages.Account
 {
     public class ConfirmEmailModel : PageModel
     {

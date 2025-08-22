@@ -52,31 +52,7 @@ public class ExcelReport : ReportBase<ISheet>
              });
     }
 
-    public Task ToStreamAsync(Stream dest)
-    {
-        return Task.Run(() =>
-        {
-            ToStream(dest);
-        });
-    }
-
     public override void ToFile(string dest)
-    {
-        try
-        {
-            GenFile(dest);
-        }
-        catch (FileNotFoundException)
-        {
-            throw;
-        }
-        catch (IOException)
-        {
-            throw;
-        }
-    }
-
-    public void ToStream(Stream dest)
     {
         try
         {
@@ -122,35 +98,6 @@ public class ExcelReport : ReportBase<ISheet>
         workbook.Write(stream, false);
     }
 
-    private void GenFile(Stream dest)
-    {
-        IWorkbook workbook = new XSSFWorkbook(); //SXSSFWorkbook();
-
-        var title = "1";
-
-        if (!string.IsNullOrWhiteSpace(Title))
-        {
-            if (Title.Length > 31)
-            {
-                title = Title.Substring(0, 27) + "...";
-            }
-            else
-            {
-                title = Title;
-            }
-        }
-
-        ISheet sheet = workbook.CreateSheet(title);
-
-        RenderHeader(sheet);
-        Progress?.Report(0.2f);
-        RenderBody(sheet);
-        Progress?.Report(0.9f);
-        RenderFooter(sheet);
-
-        workbook.Write(dest, false);
-    }
-
     protected virtual void RenderHeader(ISheet sheet)
     {
         IHeader header = sheet.Header;
@@ -168,7 +115,7 @@ public class ExcelReport : ReportBase<ISheet>
     {
         container.FitToPage = true;
         float progressEndValue = 0.9f;
-        float progressCurrentValue = Progress?.CurrentValue??0F;
+        float progressCurrentValue = Progress.CurrentValue;
 
         var tables = Elems?
             .OfType<IReportMultipleTable>()

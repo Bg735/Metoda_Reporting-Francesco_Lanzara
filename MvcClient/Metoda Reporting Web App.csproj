@@ -11,6 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+	<PackageReference Include="Duende.AccessTokenManagement" Version="4.0.0-rc.2" />
+    <PackageReference Include="Duende.AccessTokenManagement.OpenIdConnect" Version="3.2.0" />
+    <PackageReference Include="Duende.IdentityModel" Version="7.1.0" />
     <PackageReference Include="itext7" Version="7.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.18" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="8.0.18" />
@@ -22,8 +25,10 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UserDocuments\UserDocuments.csproj" />
+    <Reference Include="UserDocuments">
+      <HintPath>..\UserDocuments\bin\Debug\net8.0\UserDocuments.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
-  <Import Project="..\..\Globals\Globals.projitems" Label="Shared" />
+  <Import Project="..\Globals\Globals.projitems" Label="Shared" />
 </Project>

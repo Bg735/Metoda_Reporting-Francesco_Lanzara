@@ -53,31 +53,7 @@ public class PdfReport : ReportBase<Document>
              });
     }
 
-    public Task ToStreamAsync(Stream dest)
-    {
-        return Task.Run(() =>
-        {
-            ToStream(dest);
-        });
-    }
-
     public override void ToFile(string dest)
-    {
-        try
-        {
-            GenFile(dest);
-        }
-        catch (FileNotFoundException)
-        {
-            throw;
-        }
-        catch (IOException)
-        {
-            throw;
-        }
-    }
-
-    public void ToStream(Stream dest)
     {
         try
         {
@@ -118,31 +94,6 @@ public class PdfReport : ReportBase<Document>
         doc.Close();
     }
 
-    private void GenFile(Stream dest)
-    {
-        PdfWriter writer = new(dest);
-        PdfDocument pdfDoc = new(writer);
-        PageSize pSize =
-                PageOrientation == PageOrientation.Portrait
-                ? PageSize.A4
-                : PageSize.A4.Rotate();
-
-        Document doc = new(pdfDoc, pSize, false);
-
-        if (Progress != null)
-        {
-            pdfDoc.AddEventHandler(PdfDocumentEvent.END_PAGE, new ProgressTrackerHandler(Progress));
-        }
-
-        RenderHeader(pdfDoc, doc);
-        Progress?.Report(0.2f);
-        RenderBody(doc);
-        Progress?.Report(0.9f);
-        RenderFooter(pdfDoc);
-
-        doc.Close();
-    }
-
     protected virtual void RenderHeader(PdfDocument pdfDoc, Document doc)
     {
         HeaderEventHandler headerHandler = new(doc, new PdfFont[] { RegularFont, BoldFont, ItalicFont }, Title);
@@ -159,7 +110,7 @@ public class PdfReport : ReportBase<Document>
     protected virtual void RenderBody(Document container)
     {
         float progressEndValue = 0.9f;
-        float progressCurrentValue = Progress?.CurrentValue ?? 0F;
+        float progressCurrentValue = Progress?.CurrentValue ?? 0;
 
         if (Elems != null)
         {

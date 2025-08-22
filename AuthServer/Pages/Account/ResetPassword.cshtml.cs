@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 
-namespace Metoda_Report_Web_App___Francesco_Lanzara.Pages.Account
+namespace AuthServer.Pages.Account
 {
     public class ResetPasswordModel : PageModel
     {

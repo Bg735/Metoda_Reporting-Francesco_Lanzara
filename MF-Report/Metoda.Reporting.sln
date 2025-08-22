@@ -17,8 +17,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metoda.Reporting.Chart", "M
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Metoda.Reporting.Tests", "Metoda.Reporting.Tests\Metoda.Reporting.Tests.csproj", "{5FAF86BF-8998-435E-9962-43B448987FCE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda.Reporting.WebAPI", "Metoda.Reporting.WebAPI\Metoda.Reporting.WebAPI.csproj", "{5B209F89-8005-440C-95F1-39F43D89EF86}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,15 +51,38 @@ Global
 		{5FAF86BF-8998-435E-9962-43B448987FCE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5FAF86BF-8998-435E-9962-43B448987FCE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5FAF86BF-8998-435E-9962-43B448987FCE}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B209F89-8005-440C-95F1-39F43D89EF86}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B209F89-8005-440C-95F1-39F43D89EF86}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B209F89-8005-440C-95F1-39F43D89EF86}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B209F89-8005-440C-95F1-39F43D89EF86}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {3775C36C-EE2B-4184-A5D2-53CF08842AAA}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://srv-tfs02.metoda.it/tfs/finance
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = Metoda.Reporting.Chart\\Metoda.Reporting.Chart.csproj
+		SccProjectName1 = Metoda.Reporting.Chart
+		SccLocalPath1 = Metoda.Reporting.Chart
+		SccProjectUniqueName2 = Metoda.Reporting.Common\\Metoda.Reporting.Common.csproj
+		SccProjectName2 = Metoda.Reporting.Common
+		SccLocalPath2 = Metoda.Reporting.Common
+		SccProjectUniqueName3 = Metoda.Reporting.Excel\\Metoda.Reporting.Excel.csproj
+		SccProjectName3 = Metoda.Reporting.Excel
+		SccLocalPath3 = Metoda.Reporting.Excel
+		SccProjectUniqueName4 = Metoda.Reporting.Models\\Metoda.Reporting.Models.csproj
+		SccProjectName4 = Metoda.Reporting.Models
+		SccLocalPath4 = Metoda.Reporting.Models
+		SccProjectUniqueName5 = Metoda.Reporting.Pdf\\Metoda.Reporting.Pdf.csproj
+		SccProjectName5 = Metoda.Reporting.Pdf
+		SccLocalPath5 = Metoda.Reporting.Pdf
+		SccProjectUniqueName6 = Metoda.Reporting.TestGen\\Metoda.Reporting.TestGen.csproj
+		SccProjectName6 = Metoda.Reporting.TestGen
+		SccLocalPath6 = Metoda.Reporting.TestGen
+		SccProjectUniqueName7 = Metoda.Reporting.Tests\\Metoda.Reporting.Tests.csproj
+		SccProjectName7 = Metoda.Reporting.Tests
+		SccLocalPath7 = Metoda.Reporting.Tests
 	EndGlobalSection
 EndGlobal

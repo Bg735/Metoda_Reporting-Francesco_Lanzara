@@ -16,6 +16,6 @@
     <PackageReference Include="Yarp.ReverseProxy" Version="2.3.0" />
   </ItemGroup>
 
-  <Import Project="..\..\Globals\Globals.projitems" Label="Shared" />
+  <Import Project="..\Globals\Globals.projitems" Label="Shared" />
 
 </Project>

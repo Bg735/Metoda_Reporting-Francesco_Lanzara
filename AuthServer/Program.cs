@@ -1,3 +1,9 @@
+// Pseudocodice:
+// 1. Leggi i secret dei client da configurazione (appsettings / env) con fallback ai valori di default.
+// 2. Usa le variabili invece di stringhe hardcoded per evitare ambiguità su quale secret venga usato.
+// 3. Mantieni l'hash SHA256 quando registri il secret (IdentityServer confronta l'hash con il valore in chiaro inviato dal client).
+// 4. Sostituisci l'inizializzazione di ClientSecrets con la sintassi di collection expression per chiarezza.
+
 using AuthServer.Data;
 using Duende.IdentityServer.Models;
 using Global;
@@ -8,137 +14,118 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+
+// Correzione: SameSitePolicy non esiste. Usare SameSiteMode (enum corretto in ASP.NET Core).
 services.Configure<CookiePolicyOptions>(options =>
 {
     options.MinimumSameSitePolicy = SameSiteMode.Lax;
 });
 
-// Cookie principale usato da ASP.NET Identity
 services.ConfigureApplicationCookie(opts =>
 {
     opts.Cookie.Name = ".AspNetCore.Identity.Application";
     opts.Cookie.HttpOnly = true;
     opts.Cookie.SameSite = SameSiteMode.Lax;
-    opts.Cookie.SecurePolicy = CookieSecurePolicy.None; // dev su HTTP
+    opts.Cookie.SecurePolicy = CookieSecurePolicy.None;
     opts.Cookie.Path = "/";
-    // NON impostare Domain (rimane host-only)
 });
 
-// Cookie usato per login esterni (se li usi)
 services.ConfigureExternalCookie(opts =>
 {
     opts.Cookie.SameSite = SameSiteMode.Lax;
     opts.Cookie.SecurePolicy = CookieSecurePolicy.None;
 });
-// Add services to the container.  
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlite(connectionString));
-builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
-//builder.Services.ConfigureApplicationCookie(options =>
-//{
-//    options.LoginPath = "/Account/Login";
-//    options.LogoutPath = "/Account/Logout";
-//    options.AccessDeniedPath = "/Account/AccessDenied";
-//    options.Cookie.SecurePolicy = CookieSecurePolicy.None;
-//    options.Cookie.SameSite = SameSiteMode.Lax;
-//});
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+services.AddDatabaseDeveloperPageExceptionFilter();
 
-// Configurazione minima IdentityServer
-builder.Services.AddIdentityServer(options =>
+services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    // Imposta l'IssuerUri sull'URL pubblico del gateway
+    options.SignIn.RequireConfirmedAccount = true;
+})
+.AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Leggi i secret da configurazione (es: appsettings.json -> "IdentityServer:Clients:yarpclient:Secret")
+var yarpClientSecret = builder.Configuration["IdentityServer:Clients:yarpclient:Secret"] ?? "secret_client";
+var mvcClientSecret = builder.Configuration["IdentityServer:Clients:mvcclient:Secret"] ?? "secret_mvcclient";
+
+// Config IdentityServer (token e refresh token)
+services.AddIdentityServer(options =>
+{
     options.IssuerUri = Utils.Domain.Root;
 })
-    .AddInMemoryClients(
-    [
-        new Client
-        {
-            Properties = new Dictionary<string, string>{
-            {"response_mode", "query"}
-            },
-            ClientId = "yarpclient",
-            ClientSecrets = { new Duende.IdentityServer.Models.Secret("secret_client".Sha256()) },
-            AllowedGrantTypes = GrantTypes.ClientCredentials,
-            RedirectUris = { Utils.Domain.UrlOf("signin-oidc") },
-            PostLogoutRedirectUris = { Utils.Domain.UrlOf("signout-callback-oidc") },
-            AllowedScopes = { "openid", "profile", "api1" },
-            RequirePkce = true,
-            AllowOfflineAccess = true
-        },
-        new Client
-        {
-            Properties = new Dictionary<string, string>{
-            {"response_mode", "query"}
-            },
-            ClientId = "mvcclient",
-            ClientSecrets = { new Duende.IdentityServer.Models.Secret("secret_mvcclient".Sha256()) },
-            AllowedGrantTypes = GrantTypes.Code,
-            RedirectUris = { Utils.Domain.UrlOf("signin-oidc") },
-            PostLogoutRedirectUris = { Utils.Domain.UrlOf("signout-callback-oidc") },
-            AllowedScopes = { "openid", "profile", "api1" },
-            RequirePkce = true,
-            AllowOfflineAccess = true
-        }
-    ])
-    .AddInMemoryIdentityResources(
-    [
-        new IdentityResources.OpenId(),
-        new IdentityResources.Profile()
-    ])
-    .AddInMemoryApiScopes(
-    [
-        new ApiScope("api1", "API 1")
-    ])
-    .AddAspNetIdentity<IdentityUser>();
+.AddInMemoryClients(
+[
+    new Client
+    {
+        ClientId = "yarpclient",
+        ClientSecrets =
+        [
+            new Duende.IdentityServer.Models.Secret(yarpClientSecret.Sha256())
+        ],
+        AllowedGrantTypes = GrantTypes.ClientCredentials,
+        AllowedScopes = { "api1" },
+        AccessTokenLifetime = 900
+    },
+    new Client
+    {
+        ClientId = "mvcclient",
+        ClientSecrets =
+        [
+            new Duende.IdentityServer.Models.Secret(mvcClientSecret.Sha256())
+        ],
+        AllowedGrantTypes = GrantTypes.Code,
+        RedirectUris = { Utils.Domain.UrlOf("signin-oidc") },
+        PostLogoutRedirectUris = { Utils.Domain.UrlOf("signout-callback-oidc") },
+        AllowedScopes = { "openid", "profile", "api1", "offline_access" },
+        RequirePkce = true,
+        AllowOfflineAccess = true,
+        AccessTokenLifetime = 900,                  // 15 min
+        RefreshTokenExpiration = TokenExpiration.Sliding,
+        SlidingRefreshTokenLifetime = 60 * 60 * 8,  // 8 ore
+        AbsoluteRefreshTokenLifetime = 60 * 60 * 24,// 24 ore
+        RefreshTokenUsage = TokenUsage.ReUse
+    }
+])
+.AddInMemoryIdentityResources(
+[
+    new IdentityResources.OpenId(),
+    new IdentityResources.Profile()
+])
+.AddInMemoryApiScopes(
+[
+    new ApiScope("api1", "API 1")
+])
+.AddInMemoryApiResources(
+[
+    new ApiResource("api1") { Scopes = { "api1" } }
+])
+.AddAspNetIdentity<IdentityUser>();
 
-builder.Services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\app\data-keys")) // Percorso persistente nel container  
+services.AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\app\data-keys"))
     .SetApplicationName("MetodaAuthServer");
 
-//var certPath = @"C:\app\cert.pfx";
-//var certPassword = "password-certificato";
-//var cert = new X509Certificate2(certPath, certPassword, X509KeyStorageFlags.MachineKeySet);
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
     serverOptions.ListenAnyIP(8080);
-    //serverOptions.ListenAnyIP(443, listenOptions =>
-    //{
-    //    try
-    //    {
-    //        listenOptions.UseHttps(cert);
-
-    //    }
-    //    catch (Exception ex)
-    //    {
-    //        Console.WriteLine($"Errore HTTPS: {ex.Message}");
-    //        if (ex is FileNotFoundException fnfEx)
-    //        {
-    //            Console.WriteLine($"File non trovato: {fnfEx.FileName}");
-    //        }
-    //        throw;
-    //    }
-    //});
 });
 
-builder.Services.AddRazorPages();
+services.AddRazorPages();
 
 var app = builder.Build();
 app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
+
 var forwardedOpts = new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedHost
 };
-// accetta forwarded da qualsiasi proxy (dev)
 forwardedOpts.KnownNetworks.Clear();
 forwardedOpts.KnownProxies.Clear();
-
 app.UseForwardedHeaders(forwardedOpts);
 
-// Configure the HTTP request pipeline.  
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -149,7 +136,6 @@ app.UseIdentityServer();
 app.UseRouting();
 app.UseAuthentication();
 app.UseAuthorization();
-
 app.UseStaticFiles();
 app.MapRazorPages();
 app.Run();

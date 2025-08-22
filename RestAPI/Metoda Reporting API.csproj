@@ -20,27 +20,17 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\UserDocuments\UserDocuments.csproj" />
+    <ProjectReference Include="..\MF-Report\Metoda.Reporting.Chart\Metoda.Reporting.Chart.csproj" />
+    <ProjectReference Include="..\MF-Report\Metoda.Reporting.Common\Metoda.Reporting.Common.csproj" />
+    <ProjectReference Include="..\MF-Report\Metoda.Reporting.Excel\Metoda.Reporting.Excel.csproj" />
+    <ProjectReference Include="..\MF-Report\Metoda.Reporting.Models\Metoda.Reporting.Models.csproj" />
+    <ProjectReference Include="..\MF-Report\Metoda.Reporting.Pdf\Metoda.Reporting.Pdf.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Metoda.Reporting.Chart">
-      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Chart.dll</HintPath>
-    </Reference>
-    <Reference Include="Metoda.Reporting.Common">
-      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Common.dll</HintPath>
-    </Reference>
-    <Reference Include="Metoda.Reporting.Excel">
-      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Excel.dll</HintPath>
-    </Reference>
-    <Reference Include="Metoda.Reporting.Models">
-      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Models.dll</HintPath>
-    </Reference>
-    <Reference Include="Metoda.Reporting.Pdf">
-      <HintPath>..\MF-Report\Metoda.Reporting.Models\bin\Release\net8.0\Metoda.Reporting.Pdf.dll</HintPath>
+    <Reference Include="UserDocuments">
+      <HintPath>..\UserDocuments\bin\Debug\net8.0\UserDocuments.dll</HintPath>
     </Reference>
   </ItemGroup>
-
-  <Import Project="..\..\Globals\Globals.projitems" Label="Shared" />
 
 </Project>

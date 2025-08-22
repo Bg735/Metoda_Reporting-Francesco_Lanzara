@@ -1,25 +1,22 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <None Remove="Res\images\logo_m.png" />
-    <None Remove="Res\images\logo_metoda.png" />
+    <None Remove="Res\fonts\CALIBRI.ttf" />
+    <None Remove="Res\fonts\CALIBRIB.ttf" />
+    <None Remove="Res\fonts\CALIBRII.ttf" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="Res\fonts\CALIBRI.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ApplicationDefinition>
-    <ApplicationDefinition Include="Res\fonts\CALIBRIB.TTF">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ApplicationDefinition>
-    <ApplicationDefinition Include="Res\fonts\CALIBRII.ttf">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </ApplicationDefinition>
-    <EmbeddedResource Include="Res\images\logo_m.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <Page Include="Res\images\logo_metoda.png" />
+    <EmbeddedResource Include="Res\fonts\CALIBRI.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Res\fonts\CALIBRIB.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Res\fonts\CALIBRII.ttf">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Res\Resource.Designer.cs">
@@ -32,6 +29,7 @@
     <EmbeddedResource Update="Res\Resource.resx">
       <LastGenOutput>Resource.Designer.cs</LastGenOutput>
       <Generator>PublicResXFileCodeGenerator</Generator>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup Label="Globals">

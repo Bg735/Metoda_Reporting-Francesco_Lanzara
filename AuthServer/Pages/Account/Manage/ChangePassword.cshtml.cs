@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.Extensions.Logging;
 
-namespace Metoda_Report_Web_App___Francesco_Lanzara.Areas.Identity.Pages.Account.Manage
+namespace AuthServer.Pages.Account.Manage
 {
     public class ChangePasswordModel : PageModel
     {

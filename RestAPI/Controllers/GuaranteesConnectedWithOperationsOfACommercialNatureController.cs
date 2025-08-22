@@ -1,9 +1,9 @@
 ﻿using iText.Layout;
 using Metoda.Reporting.Models.Reports.GuaranteesConnectedWithOperationsOfACommercialNature;
 using Metoda_Report_API.Controllers.Contracts;
-using Metoda_Report_Web_App___Francesco_Lanzara.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
 {
@@ -20,22 +20,15 @@ namespace Metoda_Report_API.Controllers
         [HttpGet("pdf")]
         public async Task<IActionResult> GetPdf()
         {
-            try
-            {
-                return await GenerateAndSavePdfReportAsync<
-                    GuaranteesConnectedWithOperationsOfACommercialNaturePdfReportBuilder,
-                    GuaranteesConnectedWithOperationsOfACommercialNaturePdfReport,
-                    Document
-                >(
-                    new GuaranteesConnectedWithOperationsOfACommercialNaturePdfReportBuilder(),
-                    GuaranteesConnectedWithOperationsOfACommercialNatureFakeData.FillBuilderByData,
-                    reportCategory
-                );
-            }
-            catch (Exception)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError);
-            }
+            return await GenerateAndSavePdfReportAsync<
+                GuaranteesConnectedWithOperationsOfACommercialNaturePdfReportBuilder,
+                GuaranteesConnectedWithOperationsOfACommercialNaturePdfReport,
+                Document
+            >(
+                new GuaranteesConnectedWithOperationsOfACommercialNaturePdfReportBuilder(),
+                GuaranteesConnectedWithOperationsOfACommercialNatureFakeData.FillBuilderByData,
+                reportCategory
+            );
         }
 
         [HttpGet("xlsm")]

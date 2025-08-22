@@ -42,8 +42,8 @@ services:
       - docstorage:C:\app\docstorage
       - docmetadatadb:C:\app\appdata
     environment:
-      - Storage__Root=/app/storage
-      - ConnectionStrings__Default=Data Source=/app/appdata/docmetadata.db
+      - Storage__Root=/app/docstorage
+      - ConnectionStrings__DefaultConnection=Data Source=/app/appdata/docmetadata.db;Cache=Shared;Pooling=False
 
   mvcclient:
     user:  "ContainerAdministrator"
@@ -58,8 +58,8 @@ services:
       - docstorage:C:\app\docstorage
       - docmetadatadb:C:\app\appdata
     environment:
-      - Storage__Root=/app/storage
-      - ConnectionStrings__Default=Data Source=/app/appdata/docmetadata.db
+      - Storage__Root=/app/docstorage
+      - ConnectionStrings__DefaultConnection=Data Source=/app/appdata/docmetadata.db;Cache=Shared;Pooling=False
 
 networks:
   appnet:

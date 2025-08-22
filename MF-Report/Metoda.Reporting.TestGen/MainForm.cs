@@ -311,6 +311,7 @@ namespace Metoda.Reporting.TestGen
             var builderPdf = new InconsistencyBetweenOriginalAndResidualDurationPdfReportBuilder(progress: GetReportProgress(initPdfProgress));
             InconsistencyBetweenOriginalAndResidualDurationFakeData.FillBuilderByData(builderPdf);
             var reportPdf = builderPdf.Build();
+
             // Generate the report
             await ReportGeneratorAsync(reportPdf, (Button)sender, filePath, initPdfProgress);
 

@@ -1,11 +1,10 @@
-using Metoda_Report_Web_App___Francesco_Lanzara.Models;
-using Metoda_Report_Web_App___Francesco_Lanzara.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using UserDocuments.Models;
+using UserDocuments.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 

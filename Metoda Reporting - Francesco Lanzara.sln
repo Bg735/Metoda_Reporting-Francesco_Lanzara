@@ -6,6 +6,9 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AuthServer", "AuthServer\AuthServer.csproj", "{8C54B43A-B299-845E-30B8-D1618E507BD4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda Reporting API", "RestAPI\Metoda Reporting API.csproj", "{A9537DDC-82A3-6108-1EA2-A112DABB5C4E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{3CD19E32-5898-349D-E0CB-CB4EAD400554} = {3CD19E32-5898-349D-E0CB-CB4EAD400554}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda Reporting Web App", "MvcClient\Metoda Reporting Web App.csproj", "{5DB16C9A-E023-B36F-DF16-41D7CCB5800F}"
 EndProject
@@ -13,9 +16,23 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "Gateway\ApiGa
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{81DDED9D-158B-E303-5F62-77A2896D2A5A}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Global", "..\Globals\Global.shproj", "{C9CC362E-DFA3-4605-B544-9A86E7F0976F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Dependencies", "Dependencies", "{6C83A596-D32D-B35F-00DD-F0C99B673980}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserDocuments", "..\UserDocuments\UserDocuments.csproj", "{A1C8866A-3146-49E3-9739-E0690B113989}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Global", "Globals\Global.shproj", "{C9CC362E-DFA3-4605-B544-9A86E7F0976F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UserDocuments", "UserDocuments\UserDocuments.csproj", "{31EB088B-B1EB-7EF9-D03B-A353C12228F9}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda.Reporting.Common", "MF-Report\Metoda.Reporting.Common\Metoda.Reporting.Common.csproj", "{05A3E085-64B0-81A1-A86F-108ECFFDAAB5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda.Reporting.Chart", "MF-Report\Metoda.Reporting.Chart\Metoda.Reporting.Chart.csproj", "{C049E93D-B674-898E-04F3-C36AD3111963}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda.Reporting.Excel", "MF-Report\Metoda.Reporting.Excel\Metoda.Reporting.Excel.csproj", "{7F076901-42A1-FBF3-0414-345599AD23B3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda.Reporting.Models", "MF-Report\Metoda.Reporting.Models\Metoda.Reporting.Models.csproj", "{3CD19E32-5898-349D-E0CB-CB4EAD400554}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Metoda.Reporting.Pdf", "MF-Report\Metoda.Reporting.Pdf\Metoda.Reporting.Pdf.csproj", "{37D18FD3-688B-24B2-642F-261780A45E3F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ConsoleApp1", "..\ConsoleApp1\ConsoleApp1.csproj", "{0FE67DAF-3E7E-4E77-9C56-A7445E3708D3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -43,22 +60,52 @@ Global
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{81DDED9D-158B-E303-5F62-77A2896D2A5A}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A1C8866A-3146-49E3-9739-E0690B113989}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A1C8866A-3146-49E3-9739-E0690B113989}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A1C8866A-3146-49E3-9739-E0690B113989}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A1C8866A-3146-49E3-9739-E0690B113989}.Release|Any CPU.Build.0 = Release|Any CPU
+		{31EB088B-B1EB-7EF9-D03B-A353C12228F9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{31EB088B-B1EB-7EF9-D03B-A353C12228F9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{31EB088B-B1EB-7EF9-D03B-A353C12228F9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{31EB088B-B1EB-7EF9-D03B-A353C12228F9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{05A3E085-64B0-81A1-A86F-108ECFFDAAB5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{05A3E085-64B0-81A1-A86F-108ECFFDAAB5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{05A3E085-64B0-81A1-A86F-108ECFFDAAB5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{05A3E085-64B0-81A1-A86F-108ECFFDAAB5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C049E93D-B674-898E-04F3-C36AD3111963}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C049E93D-B674-898E-04F3-C36AD3111963}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C049E93D-B674-898E-04F3-C36AD3111963}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C049E93D-B674-898E-04F3-C36AD3111963}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F076901-42A1-FBF3-0414-345599AD23B3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F076901-42A1-FBF3-0414-345599AD23B3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F076901-42A1-FBF3-0414-345599AD23B3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F076901-42A1-FBF3-0414-345599AD23B3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3CD19E32-5898-349D-E0CB-CB4EAD400554}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3CD19E32-5898-349D-E0CB-CB4EAD400554}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3CD19E32-5898-349D-E0CB-CB4EAD400554}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3CD19E32-5898-349D-E0CB-CB4EAD400554}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37D18FD3-688B-24B2-642F-261780A45E3F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37D18FD3-688B-24B2-642F-261780A45E3F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37D18FD3-688B-24B2-642F-261780A45E3F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37D18FD3-688B-24B2-642F-261780A45E3F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0FE67DAF-3E7E-4E77-9C56-A7445E3708D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0FE67DAF-3E7E-4E77-9C56-A7445E3708D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0FE67DAF-3E7E-4E77-9C56-A7445E3708D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0FE67DAF-3E7E-4E77-9C56-A7445E3708D3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{05A3E085-64B0-81A1-A86F-108ECFFDAAB5} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
+		{C049E93D-B674-898E-04F3-C36AD3111963} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
+		{7F076901-42A1-FBF3-0414-345599AD23B3} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
+		{3CD19E32-5898-349D-E0CB-CB4EAD400554} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
+		{37D18FD3-688B-24B2-642F-261780A45E3F} = {6C83A596-D32D-B35F-00DD-F0C99B673980}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D9057604-1D2D-45BC-9F74-66223ACC1FAE}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		..\Globals\Globals.projitems*{5db16c9a-e023-b36f-df16-41d7ccb5800f}*SharedItemsImports = 5
-		..\Globals\Globals.projitems*{8c54b43a-b299-845e-30b8-d1618e507bd4}*SharedItemsImports = 5
-		..\Globals\Globals.projitems*{a9537ddc-82a3-6108-1ea2-a112dabb5c4e}*SharedItemsImports = 5
-		..\Globals\Globals.projitems*{c9cc362e-dfa3-4605-b544-9a86e7f0976f}*SharedItemsImports = 13
-		..\Globals\Globals.projitems*{ded9e068-6bfa-dbe8-ad26-1aa467ffe1d9}*SharedItemsImports = 5
+		Globals\Globals.projitems*{5db16c9a-e023-b36f-df16-41d7ccb5800f}*SharedItemsImports = 5
+		Globals\Globals.projitems*{8c54b43a-b299-845e-30b8-d1618e507bd4}*SharedItemsImports = 5
+		Globals\Globals.projitems*{c9cc362e-dfa3-4605-b544-9a86e7f0976f}*SharedItemsImports = 13
+		Globals\Globals.projitems*{ded9e068-6bfa-dbe8-ad26-1aa467ffe1d9}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal
