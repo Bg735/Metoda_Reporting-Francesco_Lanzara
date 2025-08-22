@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class TypeOfActivityIncompatibleWithRisksAtMaturityController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "TIPO ATTIVITA’ INCOMPATIBILE CON RISCHI A SCADENZA";
+        private static readonly string reportCategory = "TIPO_ATTIVITA’_INCOMPATIBILE_CON_RISCHI_A_SCADENZA";
 
         public TypeOfActivityIncompatibleWithRisksAtMaturityController(DocumentStorageService storage) : base(storage)
         {

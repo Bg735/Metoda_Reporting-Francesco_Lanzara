@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class OtherCreditsButImpairedController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "ALTRI CREDITI MA DETERIORATI";
+        private static readonly string reportCategory = "ALTRI_CREDITI_MA_DETERIORATI";
 
         public OtherCreditsButImpairedController(DocumentStorageService storage) : base(storage)
         {

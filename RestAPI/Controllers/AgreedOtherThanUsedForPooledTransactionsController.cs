@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class AgreedOtherThanUsedForPooledTransactionsController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "ACCORDATO DIVERSO DA UTILIZZATO PER OPERAZIONI IN POOL";
+        private static readonly string reportCategory = "ACCORDATO_DIVERSO_DA_UTILIZZATO_PER_OPERAZIONI_IN_POOL";
 
         public AgreedOtherThanUsedForPooledTransactionsController(DocumentStorageService storage) : base(storage)
         {

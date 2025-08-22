@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class PresenceOfLeadPoolAndNotTotalPoolOrViceVersaController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "PRESENZA DI POOL CAPOFILA E NON POOL TOTALE O VICEVERSA";
+        private static readonly string reportCategory = "PRESENZA_DI_POOL_CAPOFILA_E_NON_POOL_TOTALE_O_VICEVERSA";
 
         public PresenceOfLeadPoolAndNotTotalPoolOrViceVersaController(DocumentStorageService storage) : base(storage)
         {

@@ -11,7 +11,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class GuaranteesConnectedWithOperationsOfACommercialNatureController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "GARANZIE CONNESSE CON OPERAZIONI DI NATURA COMMERCIALE";
+        private static readonly string reportCategory = "GARANZIE_CONNESSE_CON_OPERAZIONI_DI_NATURA_COMMERCIALE";
 
         public GuaranteesConnectedWithOperationsOfACommercialNatureController(DocumentStorageService storage) : base(storage)
         {

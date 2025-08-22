@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class SummaryOfPerformanceStatementController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "RIEPILOGO PROSPETTO ANDAMENTALE";
+        private static readonly string reportCategory = "RIEPILOGO_PROSPETTO_ANDAMENTALE";
 
         public SummaryOfPerformanceStatementController(DocumentStorageService storage) : base(storage)
         {

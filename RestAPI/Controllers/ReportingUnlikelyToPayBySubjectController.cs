@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class ReportingUnlikelyToPayBySubjectController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "SEGNALAZIONE INADEMPIENZE PROBABILI PER SOGGETTO";
+        private static readonly string reportCategory = "SEGNALAZIONE_INADEMPIENZE_PROBABILI_PER_SOGGETTO";
 
         public ReportingUnlikelyToPayBySubjectController(DocumentStorageService storage) : base(storage)
         {

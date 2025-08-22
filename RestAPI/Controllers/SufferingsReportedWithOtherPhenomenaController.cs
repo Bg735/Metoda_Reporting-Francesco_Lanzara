@@ -12,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class SufferingsReportedWithOtherPhenomenaController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "SOFFERENZE SEGNALATE CON ALTRI CUBI";
+        private static readonly string reportCategory = "SOFFERENZE_SEGNALATE_CON_ALTRI_CUBI";
 
         public SufferingsReportedWithOtherPhenomenaController(DocumentStorageService storage) : base(storage)
         {

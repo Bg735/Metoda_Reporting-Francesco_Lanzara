@@ -11,7 +11,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class AbsenceRegisteredConnectedController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "ASSENZA CENSITO COLLEGATO";
+        private static readonly string reportCategory = "ASSENZA_CENSITO_COLLEGATO";
 
         public AbsenceRegisteredConnectedController(DocumentStorageService storage) : base(storage)
         {

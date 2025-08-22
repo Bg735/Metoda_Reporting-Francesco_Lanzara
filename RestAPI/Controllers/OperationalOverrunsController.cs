@@ -11,8 +11,8 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class OperationalOverrunsController : FilePersistentApiController
     {
-        private static readonly string reportCategoryAnalitics = "SCONFINAMENTI OPERATIVI - ANALITICO";
-        private static readonly string reportCategorySintetics = "SCONFINAMENTI OPERATIVI - SINTETICO";
+        private static readonly string reportCategoryAnalitics = "SCONFINAMENTI_OPERATIVI-ANALITICO";
+        private static readonly string reportCategorySintetics = "SCONFINAMENTI_OPERATIVI-SINTETICO";
 
         public OperationalOverrunsController(DocumentStorageService storage) : base(storage)
         {

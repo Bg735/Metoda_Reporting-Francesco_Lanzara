@@ -11,7 +11,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class MonthlyReportController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "REPORT ANALITICO PER CONTROPARTE";
+        private static readonly string reportCategory = "REPORT_ANALITICO_PER_CONTROPARTE";
 
         public MonthlyReportController(DocumentStorageService storage) : base(storage)
         {

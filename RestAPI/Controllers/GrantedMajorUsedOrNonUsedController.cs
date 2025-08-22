@@ -11,7 +11,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class GrantedMajorUsedOrNonUsedController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "ACCORDATO MAGGIORE DI UTILIZZATO O SENZA UTILIZZATO";
+        private static readonly string reportCategory = "ACCORDATO_MAGGIORE_DI_UTILIZZATO_O_SENZA_UTILIZZATO";
 
         public GrantedMajorUsedOrNonUsedController(DocumentStorageService storage) : base(storage)
         {

@@ -61,8 +61,8 @@ namespace UserDocuments.Models
             new DocumentType("Accordato Diverso da Utilizzato per Operazioni in Pool", "AgreedOtherThanUsedForPooledTransactions"),
             new DocumentType("Riepilogo Prospetto Andamentale", "SummaryOfPerformanceStatement"),
             new DocumentType("Incongruenza tra durata originaria e residua", "InconsistencyBetweenOriginalAndResidualDuration"),
-            new DocumentType("Sconfinamenti operativi - analitico", "OperationalOverruns/Analitics"),
-            new DocumentType("Sconfinamenti operativi - sintetico", "OperationalOverruns/Sintetics"),
+            new DocumentType("Sconfinamenti operativi-analitico", "OperationalOverruns/Analitics"),
+            new DocumentType("Sconfinamenti operativi-sintetico", "OperationalOverruns/Sintetics"),
             new DocumentType("Presenza di pool capofila e non pool totale o viceversa", "PresenceOfLeadPoolAndNotTotalPoolOrViceVersa"),
             new DocumentType("Tipo attività incompatibile con rischi a scadenza", "TypeOfActivityIncompatibleWithRisksAtMaturity"),
         };
