@@ -4,6 +4,7 @@ using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -12,7 +13,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class SummaryOfPerformanceStatementController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "RIEPILOGO_PROSPETTO_ANDAMENTALE";
+        private static readonly string reportCategory = DocumentContent.SummaryOfPerformanceStatement.FileName;
 
         public SummaryOfPerformanceStatementController(DocumentStorageService storage) : base(storage)
         {

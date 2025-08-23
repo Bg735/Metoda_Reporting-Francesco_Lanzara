@@ -13,7 +13,7 @@
     </div>
     <div class="row row-cols-1 row-cols-md-2 g-4">
         @{
-            var reports = DocumentTypes.All;
+            var reports = DocumentContent.All;
             var formats = new[]
             {
                 new { Label = "PDF", Ext = "pdf", Css = "btn-primary" },
@@ -23,23 +23,24 @@
         @foreach (var report in reports)
         {
             <div class="col">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body">
+                <div class="card shadow-sm h-100 d-flex flex-column">
+                    <div class="card-body d-flex flex-column">
                         <h5 class="card-title">@report.Title</h5>
-                        <div class="d-flex gap-2">
+                        <div class="mt-auto d-flex justify-content-center gap-2">
                             @foreach (var format in formats)
                             {
                                 <form asp-controller="Home" asp-action="Index" method="post" target="_blank">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="docCategory" value="@report.ApiName" />
                                     <input type="hidden" name="format" value="@format.Ext" />
-                                    <button type="submit" class="btn @format.Css">@format.Label</button>
+                                    <button type="submit" class="btn @format.Css px-5">@format.Label</button>
                                 </form>
                             }
                         </div>
                     </div>
                 </div>
             </div>
+
         }
     </div>
 </div>

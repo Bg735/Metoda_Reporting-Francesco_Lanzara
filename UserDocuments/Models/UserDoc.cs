@@ -32,123 +32,92 @@ namespace UserDocuments.Models
     }
 
     // Central catalog for report types used across the solution
-    public sealed record DocumentType(string Title, string ApiName)
+
+    public sealed class DocumentContent
     {
-        //public string FileName { get; init; } = DocumentTypes.TitleToFileName(Title);
-        public string FileName
+        public string Title { get; }
+        public string ApiName { get; }
+        public string FileName { get; }
+
+        private DocumentContent(string title, string apiName, string fileName)
         {
-            get
-            {
-                var value = DocumentTypes.TitleToFileName(Title);
-                Console.WriteLine(value);
-                return value;
-            }
+            Title = title;
+            ApiName = apiName;
+            FileName = fileName;
         }
-    }
 
-    public static class DocumentTypes
-    {
-        public static readonly DocumentType[] All = new[]
-        {
-            new DocumentType("Report Analitico per Controparte", "MonthlyReport"),
-            new DocumentType("Segnalazione Inadempienze Probabili per Soggetto", "ReportingUnlikelyToPayBySubject"),
-            new DocumentType("Garanzie Connesse con Operazioni di Natura Commerciale", "GuaranteesConnectedWithOperationsOfACommercialNature"),
-            new DocumentType("Sofferenze Segnalate con Altri Cubi", "SufferingsReportedWithOtherPhenomena"),
-            new DocumentType("Accordato Maggiore di Utilizzato o Senza Utilizzato", "GrantedMajorUsedOrNonUsed"),
-            new DocumentType("Altri Crediti ma Deteriorati", "OtherCreditsButImpaired"),
-            new DocumentType("Sconfinamenti Operativi", "Trespassing"),
-            new DocumentType("Assenza Censito Collegato", "AbsenceRegisteredConnected"),
-            new DocumentType("Accordato Diverso da Utilizzato per Operazioni in Pool", "AgreedOtherThanUsedForPooledTransactions"),
-            new DocumentType("Riepilogo Prospetto Andamentale", "SummaryOfPerformanceStatement"),
-            new DocumentType("Incongruenza tra durata originaria e residua", "InconsistencyBetweenOriginalAndResidualDuration"),
-            new DocumentType("Sconfinamenti operativi-analitico", "OperationalOverruns/Analitics"),
-            new DocumentType("Sconfinamenti operativi-sintetico", "OperationalOverruns/Sintetics"),
-            new DocumentType("Presenza di pool capofila e non pool totale o viceversa", "PresenceOfLeadPoolAndNotTotalPoolOrViceVersa"),
-            new DocumentType("Tipo attività incompatibile con rischi a scadenza", "TypeOfActivityIncompatibleWithRisksAtMaturity"),
-        };
+        public static readonly DocumentContent MonthlyReport =
+            new("Report Analitico per Controparte", "MonthlyReport", "REPORT_ANALITICO_PER_CONTROPARTE");
 
-        // Simple matcher: strip extension and check StartsWith against the precomputed FileName
-        public static bool TryFromFileName(string? fileName, out DocumentType? type)
+        public static readonly DocumentContent ReportingUnlikelyToPayBySubject =
+            new("Segnalazione Inadempienze Probabili per Soggetto", "ReportingUnlikelyToPayBySubject", "SEGNALAZIONE_INADEMPIENZE_PROBABILI_PER_SOGGETTO");
+
+        public static readonly DocumentContent GuaranteesConnectedWithOperationsOfACommercialNature =
+            new("Garanzie Connesse con Operazioni di Natura Commerciale", "GuaranteesConnectedWithOperationsOfACommercialNature", "GARANZIE_CONNESSE_CON_OPERAZIONI_DI_NATURA_COMMERCIALE");
+
+        public static readonly DocumentContent SufferingsReportedWithOtherPhenomena =
+            new("Sofferenze Segnalate con Altri Cubi", "SufferingsReportedWithOtherPhenomena", "SOFFERENZE_SEGNALATE_CON_ALTRI_CUBI");
+
+        public static readonly DocumentContent GrantedMajorUsedOrNonUsed =
+            new("Accordato Maggiore di Utilizzato o Senza Utilizzato", "GrantedMajorUsedOrNonUsed", "ACCORDATO_MAGGIORE_DI_UTILIZZATO_O_SENZA_UTILIZZATO");
+
+        public static readonly DocumentContent OtherCreditsButImpaired =
+            new("Altri Crediti ma Deteriorati", "OtherCreditsButImpaired", "ALTRI_CREDITI_MA_DETERIORATI");
+
+        public static readonly DocumentContent AbsenceRegisteredConnected =
+            new("Assenza Censito Collegato", "AbsenceRegisteredConnected", "ASSENZA_CENSITO_COLLEGATO");
+
+        public static readonly DocumentContent SummaryOfPerformanceStatement =
+            new("Riepilogo Prospetto Andamentale", "SummaryOfPerformanceStatement", "RIEPILOGO_PROSPETTO_ANDAMENTALE");
+
+        public static readonly DocumentContent InconsistencyBetweenOriginalAndResidualDuration =
+            new("Incongruenza tra durata originaria e residua", "InconsistencyBetweenOriginalAndResidualDuration", "INCONGRUENZA_TRA_DURATA_ORIGINARIA_E_RESIDUA");
+
+        public static readonly DocumentContent OperationalOverrunsAnalitics =
+            new("Sconfinamenti Operativi analitico", "OperationalOverruns/Analitics", "SCONFINAMENTI_OPERATIVI_ANALITICO");
+
+        public static readonly DocumentContent OperationalOverrunsSintetics =
+            new("Sconfinamenti Operativi sintetico", "OperationalOverruns/Sintetics", "SCONFINAMENTI_OPERATIVI_SINTETICO");
+
+        public static readonly DocumentContent PresenceOfLeadPoolAndNotTotalPoolOrViceVersa =
+            new("Presenza di pool capofila e non pool totale o viceversa", "PresenceOfLeadPoolAndNotTotalPoolOrViceVersa", "PRESENZA_DI_POOL_CAPOFILA_E_NON_POOL_TOTALE_O_VICEVERSA");
+
+        public static readonly DocumentContent TypeOfActivityIncompatibleWithRisksAtMaturity =
+            new("Tipo attività incompatibile con rischi a scadenza", "TypeOfActivityIncompatibleWithRisksAtMaturity", "TIPO_ATTIVITA’_INCOMPATIBILE_CON_RISCHI_A_SCADENZA");
+     
+        public static readonly DocumentContent Trepassing =
+            new("Sconfinamenti", "Trepassing", "SCONFINAMENTI");
+
+        public static IEnumerable<DocumentContent> All =>
+        [
+            MonthlyReport,
+            ReportingUnlikelyToPayBySubject,
+            GuaranteesConnectedWithOperationsOfACommercialNature,
+            SufferingsReportedWithOtherPhenomena,
+            GrantedMajorUsedOrNonUsed,
+            OtherCreditsButImpaired,
+            AbsenceRegisteredConnected,
+            SummaryOfPerformanceStatement,
+            InconsistencyBetweenOriginalAndResidualDuration,
+            OperationalOverrunsAnalitics,
+            OperationalOverrunsSintetics,
+            PresenceOfLeadPoolAndNotTotalPoolOrViceVersa,
+            TypeOfActivityIncompatibleWithRisksAtMaturity,
+            Trepassing
+        ];
+
+        public static bool TryFromFileName(string? fileName, out DocumentContent? result)
         {
-            type = null;
+            result = null;
             if (string.IsNullOrWhiteSpace(fileName)) return false;
 
-            var name = fileName;
-            var dot = name.LastIndexOf('.');
-            if (dot > 0) name = name[..dot];
+            int pos = fileName.IndexOf('|');
+            var name= fileName[..pos];
 
-            type = All.FirstOrDefault(t => name.StartsWith(t.FileName, StringComparison.OrdinalIgnoreCase));
-            return type != null;
-        }
+            result = All.FirstOrDefault(t =>
+                name.StartsWith(t.FileName, StringComparison.OrdinalIgnoreCase));
 
-        public static string TitleToFileName(string title)
-        {
-            if (string.IsNullOrWhiteSpace(title)) return string.Empty;
-            var upper = RemoveDiacritics(title).ToUpperInvariant();
-            var sb = new StringBuilder(upper.Length);
-            var lastUnderscore = false;
-            foreach (var ch in upper)
-            {
-                if (char.IsWhiteSpace(ch))
-                {
-                    if (!lastUnderscore)
-                    {
-                        sb.Append('_');
-                        lastUnderscore = true;
-                    }
-                }
-                else
-                {
-                    sb.Append(ch);
-                    lastUnderscore = false;
-                }
-            }
-            return sb.ToString().Trim('_');
-        }
-
-        private static string RemoveDiacritics(string text)
-        {
-            if (string.IsNullOrEmpty(text)) return text;
-
-            var norm = text.Normalize(NormalizationForm.FormD);
-            var sb = new StringBuilder(norm.Length + 8);
-
-            bool lastBaseWasVowel = false;
-            bool apostropheAddedForCurrentBase = false;
-
-            foreach (var ch in norm)
-            {
-                var cat = CharUnicodeInfo.GetUnicodeCategory(ch);
-                if (cat == UnicodeCategory.NonSpacingMark)
-                {
-                    if (lastBaseWasVowel && !apostropheAddedForCurrentBase && IsAccentMark(ch))
-                    {
-                        sb.Append('’'); // Trasforma vocali accentate in A’, E’, I’, O’, U’
-                        apostropheAddedForCurrentBase = true;
-                    }
-                    continue; // scarta il diacritico
-                }
-
-                // nuovo carattere base
-                lastBaseWasVowel = IsLatinVowel(ch);
-                apostropheAddedForCurrentBase = false;
-                sb.Append(ch);
-            }
-
-            return sb.ToString().Normalize(NormalizationForm.FormC);
-
-            static bool IsLatinVowel(char c)
-            {
-                c = char.ToUpperInvariant(c);
-                return c is 'A' or 'E' or 'I' or 'O' or 'U';
-            }
-
-            static bool IsAccentMark(char c)
-            {
-                // Considera gli accenti tipici italiani: grave (̀ U+0300) e acuto (́ U+0301)
-                return c == '\u0300' || c == '\u0301';
-            }
+            return result is not null;
         }
     }
-
 }

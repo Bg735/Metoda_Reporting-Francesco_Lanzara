@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Antiforgery;
 using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc.Authorization;
@@ -20,7 +21,14 @@ builder.Services
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\dpkeys"))
     .SetApplicationName("MetodaReporting");
 
-// Solo Cookie: il Gateway gestisce OIDC e scrive lo stesso cookie
+// Nome fisso del cookie antiforgery (allineato al Gateway)
+builder.Services.AddAntiforgery(options =>
+{
+    options.Cookie.Name = "XSRF-Metoda";
+    options.Cookie.SameSite = SameSiteMode.Lax;
+    options.Cookie.HttpOnly = false; // default antiforgery
+});
+
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie(options =>
     {
@@ -29,7 +37,6 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
         options.Cookie.SameSite = SameSiteMode.Lax;
         options.Cookie.SecurePolicy = CookieSecurePolicy.None;
         options.Cookie.Path = "/";
-        // Se vuoi 401 invece di redirect ad una pagina login inesistente, lascia così (nessun LoginPath).
     });
 
 builder.Services.AddAuthorization(options =>
@@ -60,6 +67,18 @@ app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMo
 app.UseStaticFiles();
 app.UseRouting();
 app.UseAuthentication();
+
+// Rigenera il cookie antiforgery ad ogni GET autenticata
+var antiforgery = app.Services.GetRequiredService<IAntiforgery>();
+app.Use(async (ctx, next) =>
+{
+    if (HttpMethods.IsGet(ctx.Request.Method) && (ctx.User?.Identity?.IsAuthenticated ?? false))
+    {
+        antiforgery.GetAndStoreTokens(ctx);
+    }
+    await next();
+});
+
 app.UseAuthorization();
 
 app.MapControllerRoute(

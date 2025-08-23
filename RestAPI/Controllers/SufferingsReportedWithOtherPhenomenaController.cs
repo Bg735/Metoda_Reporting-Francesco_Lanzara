@@ -4,6 +4,7 @@ using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -12,7 +13,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class SufferingsReportedWithOtherPhenomenaController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "SOFFERENZE_SEGNALATE_CON_ALTRI_CUBI";
+        private static readonly string reportCategory = DocumentContent.SufferingsReportedWithOtherPhenomena.FileName;
 
         public SufferingsReportedWithOtherPhenomenaController(DocumentStorageService storage) : base(storage)
         {

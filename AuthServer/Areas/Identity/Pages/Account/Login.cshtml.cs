@@ -97,8 +97,6 @@ namespace AuthServer.Pages.Account
 
         public async Task<IActionResult> OnPostAsync(string returnUrl = "/")
         {
-            returnUrl ??= "/";
-
             ExternalLogins = (await _signInManager.GetExternalAuthenticationSchemesAsync()).ToList();
 
             if (ModelState.IsValid)

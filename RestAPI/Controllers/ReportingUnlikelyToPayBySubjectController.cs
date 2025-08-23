@@ -4,6 +4,7 @@ using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using NPOI.SS.UserModel;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -12,7 +13,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class ReportingUnlikelyToPayBySubjectController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "SEGNALAZIONE_INADEMPIENZE_PROBABILI_PER_SOGGETTO";
+        private static readonly string reportCategory = DocumentContent.ReportingUnlikelyToPayBySubject.FileName;
 
         public ReportingUnlikelyToPayBySubjectController(DocumentStorageService storage) : base(storage)
         {

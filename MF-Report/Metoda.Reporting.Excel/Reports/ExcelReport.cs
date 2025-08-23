@@ -115,7 +115,7 @@ public class ExcelReport : ReportBase<ISheet>
     {
         container.FitToPage = true;
         float progressEndValue = 0.9f;
-        float progressCurrentValue = Progress.CurrentValue;
+        float progressCurrentValue = Progress?.CurrentValue ?? 0f;
 
         var tables = Elems?
             .OfType<IReportMultipleTable>()

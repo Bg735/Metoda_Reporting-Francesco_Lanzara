@@ -3,6 +3,7 @@ using Metoda.Reporting.Models.Reports.GuaranteesConnectedWithOperationsOfACommer
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -11,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class GuaranteesConnectedWithOperationsOfACommercialNatureController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "GARANZIE_CONNESSE_CON_OPERAZIONI_DI_NATURA_COMMERCIALE";
+        private static readonly string reportCategory = DocumentContent.GuaranteesConnectedWithOperationsOfACommercialNature.FileName;
 
         public GuaranteesConnectedWithOperationsOfACommercialNatureController(DocumentStorageService storage) : base(storage)
         {

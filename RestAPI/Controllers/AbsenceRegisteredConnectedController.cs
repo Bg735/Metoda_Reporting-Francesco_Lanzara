@@ -3,6 +3,7 @@ using Metoda.Reporting.Models.Reports.AbsenceRegisteredConnected;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -11,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class AbsenceRegisteredConnectedController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "ASSENZA_CENSITO_COLLEGATO";
+        private static readonly string reportCategory = DocumentContent.AbsenceRegisteredConnected.FileName;
 
         public AbsenceRegisteredConnectedController(DocumentStorageService storage) : base(storage)
         {

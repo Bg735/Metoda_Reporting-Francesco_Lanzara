@@ -56,13 +56,13 @@ namespace Metoda_Report_Web_App___Francesco_Lanzara.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout(string? returnUrl = null)
         {
-            // 1) logout locale del cookie del MvcClient
+            // logout locale cookie MVC
             await HttpContext.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
             Response.Cookies.Delete("MetodaReporting");
 
-            // 2) federated sign-out: reindirizza il POST (307) verso l’AuthServer via Gateway (/Account/Logout)
-            var target = $"/Account/Logout?returnUrl={Uri.EscapeDataString(returnUrl ?? Url.Action("Index", "Home")!)}";
-            return RedirectPreserveMethod(target); // 307 -> il browser riposta su /Account/Logout
+            // reindirizza al logout centralizzato (Gateway)
+            var target = $"/logout?returnUrl={Uri.EscapeDataString(returnUrl ?? Url.Action("Index", "Home")!)}";
+            return RedirectPreserveMethod(target);
         }
     }
 }

@@ -1,8 +1,8 @@
-﻿using iText.Layout;
-using Metoda.Reporting.Models.Reports.OperationalOverruns;
+﻿using Metoda.Reporting.Models.Reports.OperationalOverruns;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -11,8 +11,8 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class OperationalOverrunsController : FilePersistentApiController
     {
-        private static readonly string reportCategoryAnalitics = "SCONFINAMENTI_OPERATIVI-ANALITICO";
-        private static readonly string reportCategorySintetics = "SCONFINAMENTI_OPERATIVI-SINTETICO";
+        private static readonly string reportCategoryAnalitics = DocumentContent.OperationalOverrunsAnalitics.FileName;
+        private static readonly string reportCategorySintetics = DocumentContent.OperationalOverrunsSintetics.FileName;
 
         public OperationalOverrunsController(DocumentStorageService storage) : base(storage)
         {
@@ -26,7 +26,7 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSavePdfReportAsync<
                     OperationalOverrunsAnaliticsPdfReportBuilder,
                     OperationalOverrunsAnaliticsPdfReport,
-                    Document
+                    iText.Layout.Document
                 >(
                     new OperationalOverrunsAnaliticsPdfReportBuilder(),
                     OperationalOverrunsAnaliticsFakeData.FillBuilderByData,
@@ -47,7 +47,7 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     OperationalOverrunsAnaliticsExcelReportBuilder,
                     OperationalOverrunsAnaliticsExcelReport,
-                    Document
+                    iText.Layout.Document
                 >(
                     new OperationalOverrunsAnaliticsExcelReportBuilder(),
                     OperationalOverrunsAnaliticsFakeData.FillBuilderByData,
@@ -68,7 +68,7 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSavePdfReportAsync<
                     OperationalOverrunsSinteticsPdfReportBuilder,
                     OperationalOverrunsSinteticsPdfReport,
-                    Document
+                    iText.Layout.Document
                 >(
                     new OperationalOverrunsSinteticsPdfReportBuilder(),
                     OperationalOverrunsSinteticsFakeData.FillBuilderByData,
@@ -89,7 +89,7 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     OperationalOverrunsSinteticsExcelReportBuilder,
                     OperationalOverrunsSinteticsExcelReport,
-                    Document
+                    iText.Layout.Document
                 >(
                     new OperationalOverrunsSinteticsExcelReportBuilder(),
                     OperationalOverrunsSinteticsFakeData.FillBuilderByData,

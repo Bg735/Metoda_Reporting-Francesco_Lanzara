@@ -1,9 +1,3 @@
-// Pseudocodice:
-// 1. Leggi i secret dei client da configurazione (appsettings / env) con fallback ai valori di default.
-// 2. Usa le variabili invece di stringhe hardcoded per evitare ambiguità su quale secret venga usato.
-// 3. Mantieni l'hash SHA256 quando registri il secret (IdentityServer confronta l'hash con il valore in chiaro inviato dal client).
-// 4. Sostituisci l'inizializzazione di ClientSecrets con la sintassi di collection expression per chiarezza.
-
 using AuthServer.Data;
 using Duende.IdentityServer.Models;
 using Global;
@@ -14,6 +8,12 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
+
+// Data Protection: chiavi persistenti e nome app stabile
+builder.Services
+    .AddDataProtection()
+    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\dpkeys\AuthServer"))
+    .SetApplicationName("AuthServer");
 
 // Correzione: SameSitePolicy non esiste. Usare SameSiteMode (enum corretto in ASP.NET Core).
 services.Configure<CookiePolicyOptions>(options =>
@@ -67,7 +67,7 @@ services.AddIdentityServer(options =>
         ],
         AllowedGrantTypes = GrantTypes.ClientCredentials,
         AllowedScopes = { "api1" },
-        AccessTokenLifetime = 900
+        AccessTokenLifetime = 3600 // 60 min
     },
     new Client
     {
@@ -82,7 +82,7 @@ services.AddIdentityServer(options =>
         AllowedScopes = { "openid", "profile", "api1", "offline_access" },
         RequirePkce = true,
         AllowOfflineAccess = true,
-        AccessTokenLifetime = 900,                  // 15 min
+        AccessTokenLifetime = 3600,                // 60 min
         RefreshTokenExpiration = TokenExpiration.Sliding,
         SlidingRefreshTokenLifetime = 60 * 60 * 8,  // 8 ore
         AbsoluteRefreshTokenLifetime = 60 * 60 * 24,// 24 ore
@@ -103,10 +103,6 @@ services.AddIdentityServer(options =>
     new ApiResource("api1") { Scopes = { "api1" } }
 ])
 .AddAspNetIdentity<IdentityUser>();
-
-services.AddDataProtection()
-    .PersistKeysToFileSystem(new DirectoryInfo(@"C:\app\data-keys"))
-    .SetApplicationName("MetodaAuthServer");
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {

@@ -3,6 +3,7 @@ using Metoda.Reporting.Models.Reports.InconsistencyBetweenOriginalAndResidualDur
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -11,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class InconsistencyBetweenOriginalAndResidualDurationController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "INCONGRUENZA_TRA_DURATA_ORIGINARIA_E_RESIDUA";
+        private static readonly string reportCategory = DocumentContent.InconsistencyBetweenOriginalAndResidualDuration.FileName;
 
         public InconsistencyBetweenOriginalAndResidualDurationController(DocumentStorageService storage) : base(storage)
         {

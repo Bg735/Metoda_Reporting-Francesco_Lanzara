@@ -25,9 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="UserDocuments">
-      <HintPath>..\UserDocuments\bin\Debug\net8.0\UserDocuments.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\UserDocuments\UserDocuments.csproj" />
   </ItemGroup>
 
   <Import Project="..\Globals\Globals.projitems" Label="Shared" />

@@ -2,7 +2,7 @@
 using Metoda.Reporting.Models.Reports.GrantedMajorUsedOrNonUsed;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -11,7 +11,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class GrantedMajorUsedOrNonUsedController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "ACCORDATO_MAGGIORE_DI_UTILIZZATO_O_SENZA_UTILIZZATO";
+        private static readonly string reportCategory = DocumentContent.GrantedMajorUsedOrNonUsed.FileName;
 
         public GrantedMajorUsedOrNonUsedController(DocumentStorageService storage) : base(storage)
         {

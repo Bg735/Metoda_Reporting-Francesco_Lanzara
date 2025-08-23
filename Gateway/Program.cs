@@ -6,10 +6,13 @@ using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using Yarp.ReverseProxy.Transforms;
+using IdentityModel.Client;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Auth: OIDC solo qui (MVC e API usano il cookie condiviso)
+// Nome fisso per il cookie antiforgery condiviso con MvcClient
+const string AntiForgeryCookieName = "XSRF-Metoda";
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
@@ -22,6 +25,23 @@ builder.Services.AddAuthentication(options =>
     options.Cookie.SameSite = SameSiteMode.Lax;
     options.Cookie.SecurePolicy = CookieSecurePolicy.None;
     options.Cookie.Path = "/";
+    options.ExpireTimeSpan = TimeSpan.FromDays(7);
+    options.SlidingExpiration = true;
+
+    // Cancella anche l’antiforgery al sign-out
+    options.Events = new CookieAuthenticationEvents
+    {
+        OnSigningOut = ctx =>
+        {
+            ctx.HttpContext.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
+            {
+                Path = "/",
+                SameSite = SameSiteMode.Lax,
+                HttpOnly = false
+            });
+            return Task.CompletedTask;
+        }
+    };
 })
 .AddOpenIdConnect(options =>
 {
@@ -43,7 +63,6 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = true,
         ValidIssuer = "http://authserver:8080"
     };
-    // Mantieni le sostituzioni dell’host se necessario
     options.Events = new OpenIdConnectEvents
     {
         OnRedirectToIdentityProvider = ctx =>
@@ -68,7 +87,7 @@ builder.Services
     .PersistKeysToFileSystem(new DirectoryInfo(@"C:\dpkeys"))
     .SetApplicationName("MetodaReporting");
 
-// Reverse proxy con aggiunta access token se presente (per eventuali chiamate token→API)
+// YARP: aggiunge Authorization: Bearer con l’access token
 builder.Services.AddReverseProxy()
     .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
     .AddTransforms(tb =>
@@ -90,7 +109,7 @@ var app = builder.Build();
 app.UseAuthentication();
 app.UseAuthorization();
 
-// Path esclusi da auth (handshake OIDC + discovery + favicon)
+// Path pubblici
 string[] authBypassPrefixes =
 [
     "/connect",
@@ -98,30 +117,149 @@ string[] authBypassPrefixes =
     "/.well-known",
     "/signin-oidc",
     "/signout-callback-oidc",
-    "/favicon.ico"
+    "/favicon.ico",
+    "/logout",
+    "/css","/js","/lib","/images","/_content","/AuthServer.styles.css"
 ];
 
-// Middleware di protezione “selettiva”
+// Helper: richieste “interattive” (navigazione)
+static bool IsInteractiveRequest(HttpContext ctx)
+{
+    if (!ctx.Request.Headers.TryGetValue("Accept", out var accept)) return false;
+    return accept.Any(a => a.Contains("text/html", StringComparison.OrdinalIgnoreCase));
+}
+
+// Refresh automatico dell’access token
+app.Use(async (ctx, next) =>
+{
+    var path = ctx.Request.Path.Value ?? string.Empty;
+    if (authBypassPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+    {
+        await next();
+        return;
+    }
+
+    if (ctx.User?.Identity?.IsAuthenticated == true)
+    {
+        var expiresAt = await ctx.GetTokenAsync("expires_at");
+        if (DateTime.TryParse(expiresAt, out var expUtc))
+        {
+            if (expUtc.ToUniversalTime() < DateTime.UtcNow.AddMinutes(1))
+            {
+                var refreshToken = await ctx.GetTokenAsync("refresh_token");
+                if (!string.IsNullOrEmpty(refreshToken))
+                {
+                    var discoClient = new HttpClient();
+                    var disco = await discoClient.GetDiscoveryDocumentAsync("http://authserver:8080");
+                    if (!disco.IsError)
+                    {
+                        var tokenClient = new HttpClient();
+                        var tokenResult = await tokenClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+                        {
+                            Address = disco.TokenEndpoint,
+                            ClientId = "mvcclient",
+                            ClientSecret = "secret_mvcclient",
+                            RefreshToken = refreshToken
+                        });
+
+                        if (!tokenResult.IsError)
+                        {
+                            var authResult = await ctx.AuthenticateAsync();
+                            var properties = authResult?.Properties ?? new AuthenticationProperties();
+                            properties.UpdateTokenValue("access_token", tokenResult.AccessToken);
+                            properties.UpdateTokenValue("refresh_token", tokenResult.RefreshToken ?? refreshToken);
+                            properties.UpdateTokenValue("expires_at", DateTime.UtcNow.AddSeconds(tokenResult.ExpiresIn).ToString("o"));
+                            await ctx.SignInAsync(authResult!.Principal!, properties);
+                        }
+                        else
+                        {
+                            // Refresh fallito: pulizia antiforgery + logout + challenge
+                            ctx.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
+                            {
+                                Path = "/",
+                                SameSite = SameSiteMode.Lax,
+                                HttpOnly = false
+                            });
+                            await ctx.SignOutAsync();
+
+                            // Evita challenge per richieste non-HTML
+                            if (IsInteractiveRequest(ctx))
+                                await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
+                            else
+                                ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                            return;
+                        }
+                    }
+                }
+                else
+                {
+                    // Niente refresh token: pulizia antiforgery + forza login
+                    ctx.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
+                    {
+                        Path = "/",
+                        SameSite = SameSiteMode.Lax,
+                        HttpOnly = false
+                    });
+                    await ctx.SignOutAsync();
+
+                    if (IsInteractiveRequest(ctx))
+                        await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
+                    else
+                        ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                    return;
+                }
+            }
+        }
+    }
+
+    await next();
+});
+
+// Protezione selettiva: se non autenticato, una sola challenge
 app.Use(async (ctx, next) =>
 {
     var path = ctx.Request.Path.Value ?? "";
     if (authBypassPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
     {
-        // Nessuna challenge qui
         await next();
         return;
     }
 
     if (!(ctx.User?.Identity?.IsAuthenticated ?? false))
     {
-        await ctx.ChallengeAsync(); // una sola challenge, niente loop
+        // Challenge solo per richieste HTML di navigazione,
+        // per le altre risorse evita di innescare un nuovo flusso OIDC
+        if (IsInteractiveRequest(ctx))
+            await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
+        else
+            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
         return;
     }
 
     await next();
 });
 
-// Aggiungi (opzionale) favicon per evitare richieste challenge ricorsive
+// Intercetta 401 dalle API e forza login (utile come fallback)
+app.UseStatusCodePages(async sc =>
+{
+    var http = sc.HttpContext;
+    var path = http.Request.Path.Value ?? "";
+    if (http.Response.StatusCode == 401 && !authBypassPrefixes.Any(p => path.StartsWith(p, StringComparison.OrdinalIgnoreCase)))
+    {
+        http.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
+        {
+            Path = "/",
+            SameSite = SameSiteMode.Lax,
+            HttpOnly = false
+        });
+        await http.SignOutAsync();
+
+        if (IsInteractiveRequest(http))
+            await http.ChallengeAsync(new AuthenticationProperties { RedirectUri = http.Request.Path + http.Request.QueryString });
+    }
+});
+
+// Favicon
 app.Map("/favicon.ico", builderApp =>
 {
     builderApp.Run(async context =>
@@ -131,7 +269,34 @@ app.Map("/favicon.ico", builderApp =>
     });
 });
 
-// Niente RequireAuthorization globale sul proxy
+// Endpoint di logout centralizzato sul Gateway: accetta GET e POST
+app.MapMethods("/logout", new[] { "GET", "POST" }, async context =>
+{
+    var returnUrl = context.Request.Query["returnUrl"].ToString();
+    if (string.IsNullOrWhiteSpace(returnUrl))
+        returnUrl = "/";
+
+    // Pulisci eventuale cookie antiforgery condiviso
+    context.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
+    {
+        Path = "/",
+        SameSite = SameSiteMode.Lax,
+        HttpOnly = false
+    });
+
+    // Sign-out del cookie app
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+
+    // Sign-out OIDC presso l'Identity Provider (AuthServer)
+    await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties
+    {
+        RedirectUri = returnUrl
+    });
+
+    // Importante: non scrivere altro nella response dopo SignOutAsync(OIDC)
+});
+
+// Reverse proxy
 app.MapReverseProxy();
 
 app.Run();

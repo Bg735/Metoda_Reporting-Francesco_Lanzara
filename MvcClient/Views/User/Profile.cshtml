@@ -51,11 +51,9 @@
                                     ".xls" or ".xlsx" or ".xlsm" => "Excel",
                                     _ => "-"
                                 };
-                                string tipo = DocumentTypes.TryFromFileName(fileName, out var t) && t is not null
+                                string tipo = DocumentContent.TryFromFileName(fileName, out var t) && t is not null
                                     ? t.Title
                                     : fileName;
-                                Console.WriteLine(t);
-                                Console.WriteLine(tipo);
                                 <tr>
                                     <td>
                                         <a asp-controller="User"

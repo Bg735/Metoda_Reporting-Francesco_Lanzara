@@ -3,6 +3,7 @@ using Metoda.Reporting.Models.Reports.MonthlyReport;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
+using UserDocuments.Models;
 using UserDocuments.Services;
 
 namespace Metoda_Report_API.Controllers
@@ -11,7 +12,7 @@ namespace Metoda_Report_API.Controllers
     [ApiController]
     public class MonthlyReportController : FilePersistentApiController
     {
-        private static readonly string reportCategory = "REPORT_ANALITICO_PER_CONTROPARTE";
+        private static readonly string reportCategory = DocumentContent.MonthlyReport.FileName;
 
         public MonthlyReportController(DocumentStorageService storage) : base(storage)
         {

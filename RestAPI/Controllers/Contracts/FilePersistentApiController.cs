@@ -64,7 +64,7 @@ namespace Metoda_Report_API.Controllers.Contracts
             }
 
                 // Evita spazi e usa 24h
-            string fileName = $"{reportType}_{DateTime.Now:yyyy-MM-dd__HH_mm_ss}.pdf";
+            string fileName = $"{reportType}|{DateTime.Now:yyyy-MM-dd__HH_mm_ss}.pdf";
 
             string filePath = await _storage.SaveAsync(
                 userId,
