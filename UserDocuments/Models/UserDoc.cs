@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Globalization;
 using System.Text;
+using System.IO;
 
 namespace UserDocuments.Models
 {
@@ -86,7 +87,7 @@ namespace UserDocuments.Models
             new("Tipo attività incompatibile con rischi a scadenza", "TypeOfActivityIncompatibleWithRisksAtMaturity", "TIPO_ATTIVITA’_INCOMPATIBILE_CON_RISCHI_A_SCADENZA");
      
         public static readonly DocumentContent Trepassing =
-            new("Sconfinamenti", "Trepassing", "SCONFINAMENTI");
+            new("Sconfinamenti", "Trespassing", "SCONFINAMENTI");
 
         public static IEnumerable<DocumentContent> All =>
         [
@@ -112,7 +113,7 @@ namespace UserDocuments.Models
             if (string.IsNullOrWhiteSpace(fileName)) return false;
 
             int pos = fileName.IndexOf('|');
-            var name= fileName[..pos];
+            var name= pos>0?fileName[..pos] : fileName;
 
             result = All.FirstOrDefault(t =>
                 name.StartsWith(t.FileName, StringComparison.OrdinalIgnoreCase));
