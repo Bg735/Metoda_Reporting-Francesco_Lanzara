@@ -1,8 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.SufferingsReportedWithOtherPhenomena;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -15,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.SufferingsReportedWithOtherPhenomena.FileName;
 
-        public SufferingsReportedWithOtherPhenomenaController(DocumentStorageService storage) : base(storage)
+        public SufferingsReportedWithOtherPhenomenaController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -29,7 +30,7 @@ namespace Metoda_Report_API.Controllers
                     SufferingsReportedWithOtherPhenomenaPdfReport,
                     Document
                 >(
-                    new SufferingsReportedWithOtherPhenomenaPdfReportBuilder(),
+                    (ReportProgress p) => new SufferingsReportedWithOtherPhenomenaPdfReportBuilder(progress: p),
                     SufferingsReportedWithOtherPhenomenaFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -48,9 +49,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     SufferingsReportedWithOtherPhenomenaExcelReportBuilder,
                     SufferingsReportedWithOtherPhenomenaExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new SufferingsReportedWithOtherPhenomenaExcelReportBuilder(),
+                    (ReportProgress p) => new SufferingsReportedWithOtherPhenomenaExcelReportBuilder(progress: p),
                     SufferingsReportedWithOtherPhenomenaFakeData.FillBuilderByData,
                     reportCategory
                 );

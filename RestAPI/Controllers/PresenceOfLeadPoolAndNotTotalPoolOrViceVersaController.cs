@@ -1,7 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.PresenceOfLeadPoolAndNotTotalPoolOrViceVersa;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NPOI.SS.UserModel;
 using System.Net;
 using UserDocuments.Models;
@@ -15,7 +17,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.PresenceOfLeadPoolAndNotTotalPoolOrViceVersa.FileName;
 
-        public PresenceOfLeadPoolAndNotTotalPoolOrViceVersaController(DocumentStorageService storage) : base(storage)
+        public PresenceOfLeadPoolAndNotTotalPoolOrViceVersaController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -29,7 +31,7 @@ namespace Metoda_Report_API.Controllers
                     PresenceOfLeadPoolAndNotTotalPoolOrViceVersaPdfReport,
                     Document
                 >(
-                    new PresenceOfLeadPoolAndNotTotalPoolOrViceVersaPdfReportBuilder(),
+                    (ReportProgress p) => new PresenceOfLeadPoolAndNotTotalPoolOrViceVersaPdfReportBuilder(progress: p),
                     PresenceOfLeadPoolAndNotTotalPoolOrViceVersaFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -48,9 +50,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     PresenceOfLeadPoolAndNotTotalPoolOrViceVersaExcelReportBuilder,
                     PresenceOfLeadPoolAndNotTotalPoolOrViceVersaExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new PresenceOfLeadPoolAndNotTotalPoolOrViceVersaExcelReportBuilder(),
+                    (ReportProgress p) => new PresenceOfLeadPoolAndNotTotalPoolOrViceVersaExcelReportBuilder(progress: p),
                     PresenceOfLeadPoolAndNotTotalPoolOrViceVersaFakeData.FillBuilderByData,
                     reportCategory
                 );

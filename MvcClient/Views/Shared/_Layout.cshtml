@@ -8,30 +8,32 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <style>
-        html, body {
-            height: 100%;      /* niente min-height */
-            margin: 0;         /* elimina margini residui */
-        }
+        html, body { height: 100%; margin: 0; }
     </style>
 </head>
 <body class="d-flex flex-column min-vh-100">
     <header>
         <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand fs-4" asp-area="" asp-controller="Home" asp-action="Index">Metoda Reporting</a>
+            <div class="container-fluid px-3">
+                <a class="navbar-brand fw-semibold text-primary" asp-area="" asp-controller="Home" asp-action="Index">Metoda Reporting</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                         aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+                <div class="navbar-collapse collapse d-sm-inline-flex align-items-center">
                     <ul class="navbar-nav flex-grow-1">
                         <li class="nav-item">
-                            <a class="nav-link text-dark fs-5" asp-controller="Home" asp-action="Index">Generazione report</a>
+                            <a class="nav-link text-dark" asp-controller="Home" asp-action="Index">Generazione report</a>
                         </li>
                     </ul>
-                    <div class="d-flex align-items-center">
-                        <a class="btn btn-outline-secondary d-flex align-items-center fs-5" asp-controller="User" asp-action="Profile">
-                            <i class="bi bi-person-circle me-2 fs-3"></i> Profilo
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <a class="btn btn-outline-primary d-flex align-items-center" asp-controller="User" asp-action="Profile">
+                            <i class="bi bi-person-circle me-2"></i>
+                            <span>Profilo</span>
+                        </a>
+                        <a class="btn btn-primary d-flex align-items-center" href="/Identity/Account/Manage/">
+                            <i class="bi bi-gear me-2"></i>
+                            <span>Impostazioni</span>
                         </a>
                     </div>
                 </div>

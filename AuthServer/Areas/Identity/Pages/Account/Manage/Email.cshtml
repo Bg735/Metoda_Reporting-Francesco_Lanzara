@@ -1,0 +1,61 @@
+﻿@page
+@using AuthServer.Areas.Identity.Pages.Account.Manage
+@model EmailModel
+@{
+    ViewData["Title"] = "Gestisci Email";
+    ViewData["ActivePage"] = ManageNavPages.Email;
+}
+
+<div class="container py-4" style="max-width: 900px;">
+    <div class="row mb-4">
+        <div class="col text-center">
+            <h2 class="mb-2">@ViewData["Title"]</h2>
+            <partial name="_StatusMessage" for="StatusMessage" />
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title">Email dell'account</h5>
+                    <p class="card-text">Visualizza l'email corrente e aggiorna il tuo indirizzo email.</p>
+
+                    <form id="email-form" method="post">
+                        <div asp-validation-summary="All" class="text-danger" role="alert"></div>
+                        @if (Model.IsEmailConfirmed)
+                        {
+                            <div class="form-floating mb-3 input-group">
+                                <input asp-for="Email" class="form-control" placeholder="Inserisci la tua email." disabled />
+                                <div class="input-group-append">
+                                    <span class="h-100 input-group-text text-success fw-bold">✓</span>
+                                </div>
+                                <label asp-for="Email" class="form-label"></label>
+                            </div>
+                        }
+                        else
+                        {
+                            <div class="form-floating mb-3">
+                                <input asp-for="Email" class="form-control" placeholder="Inserisci la tua email." disabled />
+                                <label asp-for="Email" class="form-label"></label>
+                                <button id="email-verification" type="submit" asp-page-handler="SendVerificationEmail" class="btn btn-link p-0">Invia email di verifica</button>
+                            </div>
+                        }
+                        <div class="form-floating mb-3">
+                            <input asp-for="Input.NewEmail" class="form-control" autocomplete="email" aria-required="true" placeholder="Inserisci la nuova email." />
+                            <label asp-for="Input.NewEmail" class="form-label"></label>
+                            <span asp-validation-for="Input.NewEmail" class="text-danger"></span>
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button id="change-email-button" type="submit" asp-page-handler="ChangeEmail" class="btn btn-primary w-50">Cambia email</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

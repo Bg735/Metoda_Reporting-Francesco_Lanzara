@@ -86,13 +86,37 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
 
+// Init DB metadati documenti: migra se mancano le tabelle; crea altrimenti
 using (var scope = app.Services.CreateScope())
 {
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
     var db = scope.ServiceProvider.GetRequiredService<UserDocsDbContext>();
-    db.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
-    db.Database.ExecuteSqlRaw("PRAGMA synchronous=NORMAL;");
-    db.Database.ExecuteSqlRaw("PRAGMA foreign_keys=ON;");
-    db.Database.ExecuteSqlRaw("PRAGMA busy_timeout=5000;");
+    try
+    {
+        var migrations = db.Database.GetMigrations();
+        if (migrations.Any())
+        {
+            var pending = db.Database.GetPendingMigrations();
+            if (pending.Any())
+            {
+                db.Database.Migrate();
+            }
+        }
+        else
+        {
+            db.Database.EnsureCreated();
+        }
+
+        db.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
+        db.Database.ExecuteSqlRaw("PRAGMA synchronous=NORMAL;");
+        db.Database.ExecuteSqlRaw("PRAGMA foreign_keys=ON;");
+        db.Database.ExecuteSqlRaw("PRAGMA busy_timeout=5000;");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Errore durante l'inizializzazione del DB dei documenti");
+        throw;
+    }
 }
 
 app.Run();

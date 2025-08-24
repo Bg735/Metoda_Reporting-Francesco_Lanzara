@@ -1,8 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.TypeOfActivityIncompatibleWithRisksAtMaturity;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Services;
 
@@ -14,7 +15,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = "TIPO_ATTIVITA’_INCOMPATIBILE_CON_RISCHI_A_SCADENZA";
 
-        public TypeOfActivityIncompatibleWithRisksAtMaturityController(DocumentStorageService storage) : base(storage)
+        public TypeOfActivityIncompatibleWithRisksAtMaturityController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -28,7 +29,7 @@ namespace Metoda_Report_API.Controllers
                     TypeOfActivityIncompatibleWithRisksAtMaturityPdfReport,
                     Document
                 >(
-                    new TypeOfActivityIncompatibleWithRisksAtMaturityPdfReportBuilder(),
+                    (ReportProgress p) => new TypeOfActivityIncompatibleWithRisksAtMaturityPdfReportBuilder(progress: p),
                     TypeOfActivityIncompatibleWithRisksAtMaturityFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -47,9 +48,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     TypeOfActivityIncompatibleWithRisksAtMaturityExcelReportBuilder,
                     TypeOfActivityIncompatibleWithRisksAtMaturityExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new TypeOfActivityIncompatibleWithRisksAtMaturityExcelReportBuilder(),
+                    (ReportProgress p) => new TypeOfActivityIncompatibleWithRisksAtMaturityExcelReportBuilder(progress: p),
                     TypeOfActivityIncompatibleWithRisksAtMaturityFakeData.FillBuilderByData,
                     reportCategory
                 );

@@ -23,6 +23,14 @@ a {
   border-color: #1861ac;
 }
 
+/* Personalizzazione: quando il pulsante 'Elimina account' è attivo, usa rosso */
+#personal-data.nav-link.active,
+.nav-pills .show > #personal-data.nav-link {
+  background-color: #dc3545 !important;
+  border-color: #dc3545 !important;
+  color: #fff !important;
+}
+
 .border-top {
   border-top: 1px solid #e5e5e5;
 }
@@ -45,4 +53,19 @@ button.accept-policy {
   width: 100%;
   white-space: nowrap;
   line-height: 60px;
+}
+
+/* Additional styles for header buttons and branding */
+.navbar .navbar-brand {
+  font-weight: 600;
+  letter-spacing: .2px;
+}
+.navbar .btn {
+  border-radius: .5rem;
+}
+.navbar .btn-primary {
+  box-shadow: 0 .25rem .5rem rgba(27,110,194,.25);
+}
+.navbar .btn-outline-primary {
+  border-width: 2px;
 }

@@ -7,6 +7,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Net.Http.Headers;
 using Yarp.ReverseProxy.Transforms;
 using IdentityModel.Client;
+using System.Globalization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -129,7 +130,7 @@ static bool IsInteractiveRequest(HttpContext ctx)
     return accept.Any(a => a.Contains("text/html", StringComparison.OrdinalIgnoreCase));
 }
 
-// Refresh automatico dell’access token
+// Refresh automatico dell’access token (robustezza su expires_at)
 app.Use(async (ctx, next) =>
 {
     var path = ctx.Request.Path.Value ?? string.Empty;
@@ -141,59 +142,67 @@ app.Use(async (ctx, next) =>
 
     if (ctx.User?.Identity?.IsAuthenticated == true)
     {
-        var expiresAt = await ctx.GetTokenAsync("expires_at");
-        if (DateTime.TryParse(expiresAt, out var expUtc))
+        var expiresAtRaw = await ctx.GetTokenAsync("expires_at");
+
+        // Prova a parsare in modo deterministico (ISO 8601 "o"); se manca/non parsabile, forza il refresh
+        var needsRefresh = false;
+        if (!DateTimeOffset.TryParseExact(expiresAtRaw, "o", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal, out var expUtc))
         {
-            if (expUtc.ToUniversalTime() < DateTime.UtcNow.AddMinutes(1))
+            needsRefresh = true;
+        }
+        else
+        {
+            needsRefresh = expUtc <= DateTimeOffset.UtcNow.AddMinutes(1);
+        }
+
+        if (needsRefresh)
+        {
+            var refreshToken = await ctx.GetTokenAsync("refresh_token");
+            if (!string.IsNullOrEmpty(refreshToken))
             {
-                var refreshToken = await ctx.GetTokenAsync("refresh_token");
-                if (!string.IsNullOrEmpty(refreshToken))
+                var discoClient = new HttpClient();
+                var disco = await discoClient.GetDiscoveryDocumentAsync("http://authserver:8080");
+                if (!disco.IsError)
                 {
-                    var discoClient = new HttpClient();
-                    var disco = await discoClient.GetDiscoveryDocumentAsync("http://authserver:8080");
-                    if (!disco.IsError)
+                    var tokenClient = new HttpClient();
+                    var tokenResult = await tokenClient.RequestRefreshTokenAsync(new RefreshTokenRequest
                     {
-                        var tokenClient = new HttpClient();
-                        var tokenResult = await tokenClient.RequestRefreshTokenAsync(new RefreshTokenRequest
+                        Address = disco.TokenEndpoint,
+                        ClientId = "mvcclient",
+                        ClientSecret = "secret_mvcclient",
+                        RefreshToken = refreshToken
+                    });
+
+                    if (!tokenResult.IsError)
+                    {
+                        var authResult = await ctx.AuthenticateAsync();
+                        var properties = authResult?.Properties ?? new AuthenticationProperties();
+                        properties.UpdateTokenValue("access_token", tokenResult.AccessToken);
+                        properties.UpdateTokenValue("refresh_token", tokenResult.RefreshToken ?? refreshToken);
+                        properties.UpdateTokenValue("expires_at", DateTimeOffset.UtcNow.AddSeconds(tokenResult.ExpiresIn).ToString("o", CultureInfo.InvariantCulture));
+                        await ctx.SignInAsync(authResult!.Principal!, properties);
+                    }
+                    else
+                    {
+                        // Refresh fallito: pulizia antiforgery + logout + challenge/401
+                        ctx.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
                         {
-                            Address = disco.TokenEndpoint,
-                            ClientId = "mvcclient",
-                            ClientSecret = "secret_mvcclient",
-                            RefreshToken = refreshToken
+                            Path = "/",
+                            SameSite = SameSiteMode.Lax,
+                            HttpOnly = false
                         });
+                        await ctx.SignOutAsync();
 
-                        if (!tokenResult.IsError)
-                        {
-                            var authResult = await ctx.AuthenticateAsync();
-                            var properties = authResult?.Properties ?? new AuthenticationProperties();
-                            properties.UpdateTokenValue("access_token", tokenResult.AccessToken);
-                            properties.UpdateTokenValue("refresh_token", tokenResult.RefreshToken ?? refreshToken);
-                            properties.UpdateTokenValue("expires_at", DateTime.UtcNow.AddSeconds(tokenResult.ExpiresIn).ToString("o"));
-                            await ctx.SignInAsync(authResult!.Principal!, properties);
-                        }
+                        if (IsInteractiveRequest(ctx))
+                            await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
                         else
-                        {
-                            // Refresh fallito: pulizia antiforgery + logout + challenge
-                            ctx.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
-                            {
-                                Path = "/",
-                                SameSite = SameSiteMode.Lax,
-                                HttpOnly = false
-                            });
-                            await ctx.SignOutAsync();
-
-                            // Evita challenge per richieste non-HTML
-                            if (IsInteractiveRequest(ctx))
-                                await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
-                            else
-                                ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
-                            return;
-                        }
+                            ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                        return;
                     }
                 }
                 else
                 {
-                    // Niente refresh token: pulizia antiforgery + forza login
+                    // Discovery fallita -> come refresh fallito
                     ctx.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
                     {
                         Path = "/",
@@ -208,6 +217,23 @@ app.Use(async (ctx, next) =>
                         ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
                     return;
                 }
+            }
+            else
+            {
+                // Niente refresh token: pulizia antiforgery + forza login/challenge o 401
+                ctx.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
+                {
+                    Path = "/",
+                    SameSite = SameSiteMode.Lax,
+                    HttpOnly = false
+                });
+                await ctx.SignOutAsync();
+
+                if (IsInteractiveRequest(ctx))
+                    await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
+                else
+                    ctx.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return;
             }
         }
     }
@@ -227,8 +253,6 @@ app.Use(async (ctx, next) =>
 
     if (!(ctx.User?.Identity?.IsAuthenticated ?? false))
     {
-        // Challenge solo per richieste HTML di navigazione,
-        // per le altre risorse evita di innescare un nuovo flusso OIDC
         if (IsInteractiveRequest(ctx))
             await ctx.ChallengeAsync(new AuthenticationProperties { RedirectUri = ctx.Request.Path + ctx.Request.QueryString });
         else
@@ -276,7 +300,6 @@ app.MapMethods("/logout", new[] { "GET", "POST" }, async context =>
     if (string.IsNullOrWhiteSpace(returnUrl))
         returnUrl = "/";
 
-    // Pulisci eventuale cookie antiforgery condiviso
     context.Response.Cookies.Delete(AntiForgeryCookieName, new CookieOptions
     {
         Path = "/",
@@ -284,16 +307,11 @@ app.MapMethods("/logout", new[] { "GET", "POST" }, async context =>
         HttpOnly = false
     });
 
-    // Sign-out del cookie app
     await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-
-    // Sign-out OIDC presso l'Identity Provider (AuthServer)
     await context.SignOutAsync(OpenIdConnectDefaults.AuthenticationScheme, new AuthenticationProperties
     {
         RedirectUri = returnUrl
     });
-
-    // Importante: non scrivere altro nella response dopo SignOutAsync(OIDC)
 });
 
 // Reverse proxy

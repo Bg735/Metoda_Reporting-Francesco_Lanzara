@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using UserDocuments.Models;
+using UserDocuments.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var services = builder.Services;
@@ -38,14 +40,16 @@ services.ConfigureExternalCookie(opts =>
 
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
     ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
-services.AddDatabaseDeveloperPageExceptionFilter();
 
-services.AddDefaultIdentity<IdentityUser>(options =>
+// Consenti login immediato dopo registrazione (no conferma email obbligatoria)
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
-    options.SignIn.RequireConfirmedAccount = true;
-})
-.AddEntityFrameworkStores<ApplicationDbContext>();
+    options.SignIn.RequireConfirmedAccount = false;
+}).AddEntityFrameworkStores<ApplicationDbContext>();
+services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
+services.AddDbContext<UserDocsDbContext>(options => options.UseSqlite(connectionString));
+services.AddScoped<DocumentStorageService>();
+services.AddDatabaseDeveloperPageExceptionFilter();
 
 // Leggi i secret da configurazione (es: appsettings.json -> "IdentityServer:Clients:yarpclient:Secret")
 var yarpClientSecret = builder.Configuration["IdentityServer:Clients:yarpclient:Secret"] ?? "secret_client";
@@ -113,6 +117,41 @@ services.AddRazorPages();
 
 var app = builder.Build();
 app.UseCookiePolicy(new CookiePolicyOptions { MinimumSameSitePolicy = SameSiteMode.Lax });
+
+// Inizializza il DB dei metadati documenti: se mancano le tabelle/apply migrations, altrimenti crea lo schema dal modello
+using (var scope = app.Services.CreateScope())
+{
+    var logger = scope.ServiceProvider.GetRequiredService<ILogger<Program>>();
+    var docsDb = scope.ServiceProvider.GetRequiredService<UserDocsDbContext>();
+    try
+    {
+        var migrations = docsDb.Database.GetMigrations();
+        if (migrations.Any())
+        {
+            var pending = docsDb.Database.GetPendingMigrations();
+            if (pending.Any())
+            {
+                docsDb.Database.Migrate();
+            }
+        }
+        else
+        {
+            // Nessuna migration definita in questo assembly: crea lo schema di base
+            docsDb.Database.EnsureCreated();
+        }
+
+        // PRAGMA consigliati per SQLite
+        docsDb.Database.ExecuteSqlRaw("PRAGMA journal_mode=WAL;");
+        docsDb.Database.ExecuteSqlRaw("PRAGMA synchronous=NORMAL;");
+        docsDb.Database.ExecuteSqlRaw("PRAGMA foreign_keys=ON;");
+        docsDb.Database.ExecuteSqlRaw("PRAGMA busy_timeout=5000;");
+    }
+    catch (Exception ex)
+    {
+        logger.LogError(ex, "Errore durante l'inizializzazione del DB dei documenti");
+        throw;
+    }
+}
 
 var forwardedOpts = new ForwardedHeadersOptions
 {

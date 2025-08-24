@@ -1,7 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.MonthlyReport;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -14,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.MonthlyReport.FileName;
 
-        public MonthlyReportController(DocumentStorageService storage) : base(storage)
+        public MonthlyReportController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
             
@@ -28,7 +30,7 @@ namespace Metoda_Report_API.Controllers
                     MonthlyPdfReport,
                     Document
                 >(
-                    new MonthlyReportPdfReportBuilder(),
+                    (ReportProgress p) => new MonthlyReportPdfReportBuilder(progress: p),
                     MonthlyReportFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -49,7 +51,7 @@ namespace Metoda_Report_API.Controllers
                     MonthlyExcelReport,
                     Document
                 >(
-                    new MonthlyReportExcelReportBuilder(),
+                    (ReportProgress p) => new MonthlyReportExcelReportBuilder(progress: p),
                     MonthlyReportFakeData.FillBuilderByData,
                     reportCategory
                 );

@@ -46,3 +46,9 @@ button.accept-policy {
   white-space: nowrap;
   line-height: 60px;
 }
+
+/* Header: allinea dimensioni a AuthServer */
+.navbar .navbar-brand { font-weight: 600; letter-spacing: .2px; font-size: 1rem; }
+.navbar .nav-link { font-size: 1rem; }
+.navbar .btn { border-radius: .5rem; font-size: .95rem; padding: .375rem .75rem; }
+.navbar .btn .bi { font-size: 1rem; }

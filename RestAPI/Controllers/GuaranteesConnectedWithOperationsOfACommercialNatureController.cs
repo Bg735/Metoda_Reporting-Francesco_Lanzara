@@ -1,7 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.GuaranteesConnectedWithOperationsOfACommercialNature;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -14,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.GuaranteesConnectedWithOperationsOfACommercialNature.FileName;
 
-        public GuaranteesConnectedWithOperationsOfACommercialNatureController(DocumentStorageService storage) : base(storage)
+        public GuaranteesConnectedWithOperationsOfACommercialNatureController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -26,7 +28,7 @@ namespace Metoda_Report_API.Controllers
                 GuaranteesConnectedWithOperationsOfACommercialNaturePdfReport,
                 Document
             >(
-                new GuaranteesConnectedWithOperationsOfACommercialNaturePdfReportBuilder(),
+                (ReportProgress p) => new GuaranteesConnectedWithOperationsOfACommercialNaturePdfReportBuilder(progress: p),
                 GuaranteesConnectedWithOperationsOfACommercialNatureFakeData.FillBuilderByData,
                 reportCategory
             );
@@ -42,7 +44,7 @@ namespace Metoda_Report_API.Controllers
                     GuaranteesConnectedWithOperationsOfACommercialNatureExcelReport,
                     Document
                 >(
-                    new GuaranteesConnectedWithOperationsOfACommercialNatureExcelReportBuilder(),
+                    (ReportProgress p) => new GuaranteesConnectedWithOperationsOfACommercialNatureExcelReportBuilder(progress: p),
                     GuaranteesConnectedWithOperationsOfACommercialNatureFakeData.FillBuilderByData,
                     reportCategory
                 );

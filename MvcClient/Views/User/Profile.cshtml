@@ -19,6 +19,10 @@
 
         <h2 class="text-center mb-2">@ViewBag.Email</h2>
 
+        <div class="text-center mb-2">
+            <span class="badge rounded-pill text-bg-primary">Documenti totali: <span id="user-doc-count">@((int?)ViewBag.TotalDocuments ?? 0)</span></span>
+        </div>
+
         <h3 class="text-center mb-5">Ultimi documenti</h3>
 
         <div class="table-responsive mt-50">
@@ -74,3 +78,30 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <meta name="report-api-hub" content="/hub" />
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/report-hub.js" asp-append-version="true"></script>
+    <script>
+        // aggiorna badge conteggio quando viene notificato il completamento
+        (function(){
+            function refreshCount(){
+                fetch('@Url.Action("DocumentCount", "User")', { credentials: 'include' })
+                    .then(r => r.ok ? r.json() : null)
+                    .then(j => {
+                        if(!j) return;
+                        const el = document.getElementById('user-doc-count');
+                        if(el) el.textContent = j.count;
+                    })
+                    .catch(() => {});
+            }
+
+            // fallback: aggiorna al load per sicurezza
+            window.addEventListener('load', refreshCount);
+
+            // ascolta evento custom lanciato da report-hub.js
+            window.addEventListener('report:completed', refreshCount);
+        })();
+    </script>
+}

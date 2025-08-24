@@ -20,6 +20,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.22.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="9.0.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -28,6 +29,10 @@
 
   <ItemGroup>
     <Folder Include="keys\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\UserDocuments\UserDocuments.csproj" />
   </ItemGroup>
 
   <Import Project="..\Globals\Globals.projitems" Label="Shared" />

@@ -1,8 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.Trespassing;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -15,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.Trepassing.FileName;
 
-        public TrespassingController(DocumentStorageService storage) : base(storage)
+        public TrespassingController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -29,7 +30,7 @@ namespace Metoda_Report_API.Controllers
                     TrespassingPdfReport,
                     Document
                 >(
-                    new TrespassingPdfReportBuilder(),
+                    (ReportProgress p) => new TrespassingPdfReportBuilder(progress: p),
                     TrespassingFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -48,9 +49,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     TrespassingExcelReportBuilder,
                     TrespassingExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new TrespassingExcelReportBuilder(),
+                    (ReportProgress p) => new TrespassingExcelReportBuilder(progress: p),
                     TrespassingFakeData.FillBuilderByData,
                     reportCategory
                 );

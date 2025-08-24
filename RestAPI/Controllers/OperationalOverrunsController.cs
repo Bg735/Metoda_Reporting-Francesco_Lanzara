@@ -1,6 +1,8 @@
-﻿using Metoda.Reporting.Models.Reports.OperationalOverruns;
+﻿using Metoda.Reporting.Common.Elements;
+using Metoda.Reporting.Models.Reports.OperationalOverruns;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -14,7 +16,7 @@ namespace Metoda_Report_API.Controllers
         private static readonly string reportCategoryAnalitics = DocumentContent.OperationalOverrunsAnalitics.FileName;
         private static readonly string reportCategorySintetics = DocumentContent.OperationalOverrunsSintetics.FileName;
 
-        public OperationalOverrunsController(DocumentStorageService storage) : base(storage)
+        public OperationalOverrunsController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -28,14 +30,14 @@ namespace Metoda_Report_API.Controllers
                     OperationalOverrunsAnaliticsPdfReport,
                     iText.Layout.Document
                 >(
-                    new OperationalOverrunsAnaliticsPdfReportBuilder(),
+                    (ReportProgress p) => new OperationalOverrunsAnaliticsPdfReportBuilder(progress: p),
                     OperationalOverrunsAnaliticsFakeData.FillBuilderByData,
                     reportCategoryAnalitics
                 );
             }
             catch (Exception)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError);
             }
         }
 
@@ -49,14 +51,14 @@ namespace Metoda_Report_API.Controllers
                     OperationalOverrunsAnaliticsExcelReport,
                     iText.Layout.Document
                 >(
-                    new OperationalOverrunsAnaliticsExcelReportBuilder(),
+                    (ReportProgress p) => new OperationalOverrunsAnaliticsExcelReportBuilder(progress: p),
                     OperationalOverrunsAnaliticsFakeData.FillBuilderByData,
                     reportCategoryAnalitics
                 );
             }
             catch (Exception)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError);
             }
         }
 
@@ -70,14 +72,14 @@ namespace Metoda_Report_API.Controllers
                     OperationalOverrunsSinteticsPdfReport,
                     iText.Layout.Document
                 >(
-                    new OperationalOverrunsSinteticsPdfReportBuilder(),
+                    (ReportProgress p) => new OperationalOverrunsSinteticsPdfReportBuilder(progress: p),
                     OperationalOverrunsSinteticsFakeData.FillBuilderByData,
                     reportCategorySintetics
                 );
             }
             catch (Exception)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError);
             }
         }
 
@@ -91,14 +93,14 @@ namespace Metoda_Report_API.Controllers
                     OperationalOverrunsSinteticsExcelReport,
                     iText.Layout.Document
                 >(
-                    new OperationalOverrunsSinteticsExcelReportBuilder(),
+                    (ReportProgress p) => new OperationalOverrunsSinteticsExcelReportBuilder(progress: p),
                     OperationalOverrunsSinteticsFakeData.FillBuilderByData,
                     reportCategorySintetics
                 );
             }
             catch (Exception)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError);
+                return StatusCode((int)System.Net.HttpStatusCode.InternalServerError);
             }
         }
     }

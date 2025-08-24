@@ -4,6 +4,62 @@
 
 @using UserDocuments.Models
 
+<style>
+        /* progress bar docked below header, always visible */
+        #report-progress-container {
+            position: fixed;
+            top: 0; /* verrà corretto via JS alla height dell'header */
+            left: 0;
+            right: 0;
+            z-index: 1080;
+            padding: .35rem .75rem;
+            background: linear-gradient(180deg, rgba(248,249,250,0.92), rgba(248,249,250,0.75)); /* vicino a bg-light */
+            backdrop-filter: blur(4px);
+            box-shadow: 0 4px 16px rgba(0,0,0,.12);
+        }
+        #report-progress-container .progress {
+            height: 12px; /* più sottile e moderna */
+            background-color: rgba(0,0,0,.08);
+            border-radius: 999px;
+            overflow: hidden;
+        }
+        #report-progress-bar {
+            background-image: linear-gradient(90deg, #0d6efd, #35a0ff);
+            box-shadow: inset 0 0 6px rgba(255,255,255,.25);
+        }
+
+        /* Bigger checkbox and label */
+        #open-report-row .form-check-input {
+            transform: scale(1.25);
+            transform-origin: left center;
+            margin-right: .5rem;
+        }
+        #open-report-row .form-check-label {
+            font-size: 1.05rem;
+        }
+</style>
+
+<!-- Progress bar under header only for this page -->
+<div id="report-progress-container" class="d-none">
+    <div class="progress rounded-pill shadow-sm w-100">
+        <div id="report-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
+             role="progressbar" aria-valuemin="0" aria-valuemax="100" style="width: 0%"></div>
+    </div>
+</div>
+
+<!-- Toast only for this page -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080">
+    <div id="report-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body">
+                <strong class="toast-title me-2">Report pronto</strong>
+                <span>La generazione del report è stata completata.</span>
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
 <div class="container py-4">
     <div class="row mb-4">
         <div class="col text-center">
@@ -11,6 +67,19 @@
             <p class="lead">Seleziona il report che desideri generare:</p>
         </div>
     </div>
+
+    <!-- Opzione: apri report al termine della generazione -->
+    <div class="row mb-3" id="open-report-row">
+        <div class="col d-flex justify-content-center">
+            <div class="form-check d-flex align-items-center">
+                <input class="form-check-input" type="checkbox" value="true" id="open-report-chk" @( (bool?)ViewBag.OpenReportPreferred == true ? "checked" : "")>
+                <label class="form-check-label ms-2" for="open-report-chk">
+                    Apri report al termine della generazione
+                </label>
+            </div>
+        </div>
+    </div>
+
     <div class="row row-cols-1 row-cols-md-2 g-4">
         @{
             var reports = DocumentContent.All;
@@ -29,18 +98,86 @@
                         <div class="mt-auto d-flex justify-content-center gap-2">
                             @foreach (var format in formats)
                             {
-                                <form asp-controller="Home" asp-action="Index" method="post" target="_blank">
+                                <form class="report-form" asp-controller="Home" asp-action="Index" method="post">
                                     @Html.AntiForgeryToken()
                                     <input type="hidden" name="docCategory" value="@report.ApiName" />
                                     <input type="hidden" name="format" value="@format.Ext" />
+                                    <input type="hidden" name="openReport" value="false" />
                                     <button type="submit" class="btn @format.Css px-5">@format.Label</button>
                                 </form>
                             }
                         </div>
                     </div>
                 </div>
-            </div>
+            </div>  
 
         }
     </div>
 </div>
+
+@section Scripts {
+    <meta name="report-api-hub" content="/hub" />
+    <script src="~/lib/signalr/dist/browser/signalr.min.js"></script>
+    <script src="~/js/report-hub.js" asp-append-version="true"></script>
+    <script>
+        // Posiziona la barra subito sotto l'header (anche se proviene da layout esterno)
+        (function(){
+            function positionProgressBar(){
+                const header = document.querySelector('header');
+                const bar = document.getElementById('report-progress-container');
+                if(!bar) return;
+                const h = header ? header.getBoundingClientRect().height : 0;
+                bar.style.top = h + 'px';
+            }
+            window.addEventListener('load', positionProgressBar);
+            window.addEventListener('resize', positionProgressBar);
+        })();
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const chk = document.getElementById('open-report-chk');
+            const forms = document.querySelectorAll('form.report-form');
+
+            function persistPreference(checked){
+                fetch('@Url.Action("SetOpenPreference","Home")', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                        'RequestVerificationToken': document.querySelector('input[name="__RequestVerificationToken"]').value
+                    },
+                    body: 'open=' + encodeURIComponent(checked ? 'true' : 'false'),
+                    credentials: 'include'
+                }).catch(() => {});
+            }
+
+            if(chk){
+                chk.addEventListener('change', function(){
+                    persistPreference(chk.checked);
+                });
+            }
+
+            forms.forEach(function (f) {
+                f.addEventListener('submit', function (e) {
+                    const open = !!(chk && chk.checked);
+                    const hidden = f.querySelector('input[name="openReport"]');
+                    if (hidden) hidden.value = open ? 'true' : 'false';
+
+                    if (open) {
+                        f.setAttribute('target', '_blank');
+                        return;
+                    }
+
+                    e.preventDefault();
+                    f.removeAttribute('target');
+
+                    const doc = (f.querySelector('input[name="docCategory"]').value || '').replace(/\/$/, '');
+                    const fmt = (f.querySelector('input[name="format"]').value || '').trim();
+                    if (!doc || !fmt) return;
+                    const url = `/api/${doc}/${fmt}`;
+
+                    fetch(url, { method: 'GET', credentials: 'include' })
+                        .catch(() => { /* opzionale: log/notify error */ });
+                });
+            });
+        });
+    </script>
+}

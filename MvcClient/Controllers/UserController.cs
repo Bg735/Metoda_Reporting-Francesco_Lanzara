@@ -36,6 +36,7 @@ namespace Metoda_Report_Web_App___Francesco_Lanzara.Controllers
 
             ViewBag.Email = email;
             ViewBag.RecentDocuments = vm;
+            ViewBag.TotalDocuments = await _documentService.CountAsync(userId);
             return View();
         }
 
@@ -50,6 +51,26 @@ namespace Metoda_Report_Web_App___Francesco_Lanzara.Controllers
 
             var (stream, mimeType, fileName) = await _documentService.GetForDownloadAsync(userId, id);
             return File(stream, mimeType, fileName);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> DocumentCount()
+        {
+            var rawId = User.FindFirstValue(ClaimTypes.NameIdentifier) ?? User.FindFirstValue("sub");
+            if (!Guid.TryParse(rawId, out var userId))
+                return Unauthorized();
+
+            var count = await _documentService.CountAsync(userId);
+            return Json(new { count });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult DeleteProfile()
+        {
+            // Ora deleghiamo la cancellazione totale alla pagina di Identity
+            var deleteUrl = "/Identity/Account/Manage/DeletePersonalData";
+            return Redirect(deleteUrl);
         }
 
         [HttpPost]

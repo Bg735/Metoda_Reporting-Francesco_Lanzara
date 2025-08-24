@@ -1,8 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.ReportingUnlikelyToPayBySubject;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -15,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.ReportingUnlikelyToPayBySubject.FileName;
 
-        public ReportingUnlikelyToPayBySubjectController(DocumentStorageService storage) : base(storage)
+        public ReportingUnlikelyToPayBySubjectController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -29,7 +30,7 @@ namespace Metoda_Report_API.Controllers
                     ReportingUnlikelyToPayBySubjectPdfReport,
                     Document
                 >(
-                    new ReportingUnlikelyToPayBySubjectPdfReportBuilder(),
+                    (ReportProgress p) => new ReportingUnlikelyToPayBySubjectPdfReportBuilder(progress: p),
                     ReportingUnlikelyToPayBySubjectFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -48,9 +49,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     ReportingUnlikelyToPayBySubjectExcelReportBuilder,
                     ReportingUnlikelyToPayBySubjectExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new ReportingUnlikelyToPayBySubjectExcelReportBuilder(),
+                    (ReportProgress p) => new ReportingUnlikelyToPayBySubjectExcelReportBuilder(progress: p),
                     ReportingUnlikelyToPayBySubjectFakeData.FillBuilderByData,
                     reportCategory
                 );

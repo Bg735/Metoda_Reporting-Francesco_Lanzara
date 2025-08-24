@@ -1,7 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.OtherCreditsButImpaired;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using NPOI.SS.UserModel;
 using System.Net;
 using UserDocuments.Models;
@@ -15,7 +17,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.OtherCreditsButImpaired.FileName;
 
-        public OtherCreditsButImpairedController(DocumentStorageService storage) : base(storage)
+        public OtherCreditsButImpairedController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -29,7 +31,7 @@ namespace Metoda_Report_API.Controllers
                     OtherCreditsButImpairedPdfReport,
                     Document
                 >(
-                    new OtherCreditsButImpairedPdfReportBuilder(),
+                    (ReportProgress p) => new OtherCreditsButImpairedPdfReportBuilder(progress: p),
                     OtherCreditsButImpairedFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -48,9 +50,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     OtherCreditsButImpairedExcelReportBuilder,
                     OtherCreditsButImpairedExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new OtherCreditsButImpairedExcelReportBuilder(),
+                    (ReportProgress p) => new OtherCreditsButImpairedExcelReportBuilder(progress: p),
                     OtherCreditsButImpairedFakeData.FillBuilderByData,
                     reportCategory
                 );

@@ -2,11 +2,23 @@
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
-<ul class="navbar-nav">
-    <li class="nav-item fs-4">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-    </li>
-    <li class="nav-item fs-4">
-        <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-    </li>
-</ul>
+@{
+    var path = Context?.Request?.Path.Value ?? string.Empty;
+    var isManage = path.Contains("/Account/Manage", StringComparison.OrdinalIgnoreCase);
+}
+
+@if (isManage)
+{
+    <ul class="navbar-nav">
+        <li class="nav-item me-2">
+            <a class="btn btn-outline-primary px-3" asp-area="Identity" asp-page="/Account/Register">
+                <span class="fw-semibold">Registrati</span>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a class="btn btn-primary px-3" asp-area="Identity" asp-page="/Account/Login">
+                <span class="fw-semibold">Accedi</span>
+            </a>
+        </li>
+    </ul>
+}

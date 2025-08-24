@@ -1,3 +1,4 @@
+using Metoda_Report_API;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
@@ -13,6 +14,8 @@ builder.Services.AddScoped<DocumentStorageService>();
 var cs = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<UserDocsDbContext>(opt =>
     opt.UseSqlite(cs));
+
+builder.Services.AddSignalR();
 
 
 builder.Services.AddControllers();
@@ -78,6 +81,8 @@ app.Use(async (context, next) =>
     }
 });
 
+app.UseRouting();
+
 app.UseForwardedHeaders(new ForwardedHeadersOptions
 {
     ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedHost | ForwardedHeaders.XForwardedProto
@@ -85,6 +90,11 @@ app.UseForwardedHeaders(new ForwardedHeadersOptions
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapControllers();
+app.UseEndpoints(endpoints =>
+    {
+        endpoints.MapControllers();
+        endpoints.MapHub<ReportHub>("/hub");
+    }
+);
 
 app.Run();

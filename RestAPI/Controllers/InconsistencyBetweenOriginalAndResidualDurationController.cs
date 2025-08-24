@@ -1,7 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.InconsistencyBetweenOriginalAndResidualDuration;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -14,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.InconsistencyBetweenOriginalAndResidualDuration.FileName;
 
-        public InconsistencyBetweenOriginalAndResidualDurationController(DocumentStorageService storage) : base(storage)
+        public InconsistencyBetweenOriginalAndResidualDurationController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -28,7 +30,7 @@ namespace Metoda_Report_API.Controllers
                     InconsistencyBetweenOriginalAndResidualDurationPdfReport,
                     Document
                 >(
-                    new InconsistencyBetweenOriginalAndResidualDurationPdfReportBuilder(),
+                    (ReportProgress p) => new InconsistencyBetweenOriginalAndResidualDurationPdfReportBuilder(progress: p),
                     InconsistencyBetweenOriginalAndResidualDurationFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -49,7 +51,7 @@ namespace Metoda_Report_API.Controllers
                     InconsistencyBetweenOriginalAndResidualDurationExcelReport,
                     Document
                 >(
-                    new InconsistencyBetweenOriginalAndResidualDurationExcelReportBuilder(),
+                    (ReportProgress p) => new InconsistencyBetweenOriginalAndResidualDurationExcelReportBuilder(progress: p),
                     InconsistencyBetweenOriginalAndResidualDurationFakeData.FillBuilderByData,
                     reportCategory
                 );

@@ -1,7 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.GrantedMajorUsedOrNonUsed;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using UserDocuments.Models;
 using UserDocuments.Services;
 
@@ -13,7 +15,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.GrantedMajorUsedOrNonUsed.FileName;
 
-        public GrantedMajorUsedOrNonUsedController(DocumentStorageService storage) : base(storage)
+        public GrantedMajorUsedOrNonUsedController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -25,7 +27,7 @@ namespace Metoda_Report_API.Controllers
                 GrantedMajorUsedOrNonUsedPdfReport,
                 Document
             >(
-                new GrantedMajorUsedOrNonUsedPdfReportBuilder(),
+                (ReportProgress p) => new GrantedMajorUsedOrNonUsedPdfReportBuilder(progress: p),
                 GrantedMajorUsedOrNonUsedFakeData.FillBuilderByData,
                 reportCategory
             );
@@ -39,7 +41,7 @@ namespace Metoda_Report_API.Controllers
                 GrantedMajorUsedOrNonUsedExcelReport,
                 Document
             >(
-                new GrantedMajorUsedOrNonUsedExcelReportBuilder(),
+                (ReportProgress p) => new GrantedMajorUsedOrNonUsedExcelReportBuilder(progress: p),
                 GrantedMajorUsedOrNonUsedFakeData.FillBuilderByData,
                 reportCategory
             );

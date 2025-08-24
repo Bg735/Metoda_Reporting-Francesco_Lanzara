@@ -1,8 +1,9 @@
 ﻿using iText.Layout;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Models.Reports.SummaryOfPerformanceStatement;
 using Metoda_Report_API.Controllers.Contracts;
 using Microsoft.AspNetCore.Mvc;
-using NPOI.SS.UserModel;
+using Microsoft.AspNetCore.SignalR;
 using System.Net;
 using UserDocuments.Models;
 using UserDocuments.Services;
@@ -15,7 +16,7 @@ namespace Metoda_Report_API.Controllers
     {
         private static readonly string reportCategory = DocumentContent.SummaryOfPerformanceStatement.FileName;
 
-        public SummaryOfPerformanceStatementController(DocumentStorageService storage) : base(storage)
+        public SummaryOfPerformanceStatementController(DocumentStorageService storage, IHubContext<ReportHub> hub) : base(storage, hub)
         {
         }
 
@@ -29,7 +30,7 @@ namespace Metoda_Report_API.Controllers
                     SummaryOfPerformanceStatementPdfReport,
                     Document
                 >(
-                    new SummaryOfPerformanceStatementPdfReportBuilder(),
+                    (ReportProgress p) => new SummaryOfPerformanceStatementPdfReportBuilder(progress: p),
                     SummaryOfPerformanceStatementFakeData.FillBuilderByData,
                     reportCategory
                 );
@@ -48,9 +49,9 @@ namespace Metoda_Report_API.Controllers
                 return await GenerateAndSaveExcelReportAsync<
                     SummaryOfPerformanceStatementExcelReportBuilder,
                     SummaryOfPerformanceStatementExcelReport,
-                    ISheet
+                    Document
                 >(
-                    new SummaryOfPerformanceStatementExcelReportBuilder(),
+                    (ReportProgress p) => new SummaryOfPerformanceStatementExcelReportBuilder(progress: p),
                     SummaryOfPerformanceStatementFakeData.FillBuilderByData,
                     reportCategory
                 );

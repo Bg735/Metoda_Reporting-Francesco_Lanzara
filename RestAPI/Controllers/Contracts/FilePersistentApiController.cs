@@ -1,9 +1,12 @@
 ﻿using iText.Layout;
 using Metoda.Reporting.Common.Builders;
+using Metoda.Reporting.Common.Elements;
 using Metoda.Reporting.Excel.Builders;
 using Metoda.Reporting.Excel.Reports;
 using Metoda.Reporting.Pdf.Reports;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
+using System;
 using System.Net;
 using System.Security.Claims;
 using UserDocuments.Services;
@@ -14,10 +17,12 @@ namespace Metoda_Report_API.Controllers.Contracts
     {
         readonly private string dataFolder = Path.Combine(AppContext.BaseDirectory, "Data");
         readonly private DocumentStorageService _storage;
+        readonly protected IHubContext<ReportHub> _hub;
 
-        public FilePersistentApiController(DocumentStorageService storage)
+        public FilePersistentApiController(DocumentStorageService storage, IHubContext<ReportHub> hub)
         {
             _storage = storage;
+            _hub = hub;
         }
 
         private bool TryGetUserId(out Guid userId)
@@ -47,15 +52,19 @@ namespace Metoda_Report_API.Controllers.Contracts
             // ultimo tentativo: lascia propagare l'eccezione se fallisce
             return new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.ReadWrite | FileShare.Delete);
         }
-
-        async protected Task<IActionResult> GenerateAndSavePdfReportAsync<TBuilder, TReport, TContainer>(TBuilder builder, Action<TBuilder> fillBuilderAction, string reportType)
+        async protected Task<IActionResult> GenerateAndSavePdfReportAsync<TBuilder, TReport, TContainer>(Func<ReportProgress, TBuilder> GetBuilder, Action<TBuilder> FillBuilder, string reportType)
             where TBuilder : ReportBuilderBase<TReport, Document>
             where TReport : PdfReport
         {
             if (!TryGetUserId(out var userId))
                 return Unauthorized();
-
-            fillBuilderAction(builder);
+            var builder = GetBuilder(
+                new ReportProgress(async (value) =>
+                {
+                    await _hub.Clients.All.SendAsync("ReportProgress", value);
+                })
+            );
+            FillBuilder(builder);
             var report = builder.Build();
 
             if (!Directory.Exists(dataFolder))
@@ -63,7 +72,6 @@ namespace Metoda_Report_API.Controllers.Contracts
                 Directory.CreateDirectory(dataFolder);
             }
 
-                // Evita spazi e usa 24h
             string fileName = $"{reportType}|{DateTime.Now:yyyy-MM-dd__HH_mm_ss}.pdf";
 
             string filePath = await _storage.SaveAsync(
@@ -72,6 +80,10 @@ namespace Metoda_Report_API.Controllers.Contracts
                 "application/pdf",
                 report.ToFile
             );
+
+            // Ricava l'ID (GUID) dal percorso salvato: è il nome file senza estensione
+            var generatedId = Path.GetFileNameWithoutExtension(filePath) ?? string.Empty;
+            await _hub.Clients.All.SendAsync("ReportCompleted", new { id = generatedId, name = Path.GetFileName(fileName) });
 
             try
             {
@@ -85,15 +97,20 @@ namespace Metoda_Report_API.Controllers.Contracts
             }
         }
 
-        protected async Task<IActionResult> GenerateAndSaveExcelReportAsync<TBuilder, TReport, TContainer>(TBuilder builder, Action<TBuilder> fillBuilderAction, string reportType)
+        protected async Task<IActionResult> GenerateAndSaveExcelReportAsync<TBuilder, TReport, TContainer>(Func<ReportProgress, TBuilder> GetBuilder, Action<TBuilder> FillBuilder, string reportType)
             where TBuilder : ExcelReportBuilder<TReport>
             where TReport : ExcelReport
             where TContainer : class
         {
             if (!TryGetUserId(out var userId))
                 return Unauthorized();
-
-            fillBuilderAction(builder);
+            var builder = GetBuilder(
+                new ReportProgress(async (value) =>
+                {
+                    await _hub.Clients.All.SendAsync("ReportProgress", value);
+                })
+            );
+            FillBuilder(builder);
             var report = builder.Build();
 
             if (!Directory.Exists(dataFolder))
@@ -111,6 +128,9 @@ namespace Metoda_Report_API.Controllers.Contracts
                 "application/vnd.ms-excel.sheet.macroEnabled.12",
                 report.ToFile
             );
+
+            var generatedId = Path.GetFileNameWithoutExtension(filePath) ?? string.Empty;
+            await _hub.Clients.All.SendAsync("ReportCompleted", new { id = generatedId, name = Path.GetFileName(fileName) });
 
             try
             {
