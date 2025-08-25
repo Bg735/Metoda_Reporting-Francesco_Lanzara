@@ -18,12 +18,12 @@
         box-shadow: 0 4px 16px rgba(0,0,0,.12);
     }
 
-        #report-progress-container .progress {
-            height: 12px; /* più sottile e moderna */
-            background-color: rgba(0,0,0,.08);
-            border-radius: 999px;
-            overflow: hidden;
-        }
+    #report-progress-container .progress {
+        height: 12px; /* più sottile e moderna */
+        background-color: rgba(0,0,0,.08);
+        border-radius: 999px;
+        overflow: hidden;
+    }
 
     #report-progress-bar {
         background-image: linear-gradient(90deg, #0d6efd, #35a0ff);
@@ -54,9 +54,36 @@
         border: 0;
     }
 
-        .btn-gradient-pdf:hover, .btn-gradient-excel:hover {
-            filter: brightness(0.95);
-        }
+    .btn-gradient-pdf:hover, .btn-gradient-excel:hover {
+        filter: brightness(0.95);
+    }
+
+    .toast {
+        color: #fff !important;
+    }
+
+    /* Titolo del toast */
+    .toast-title {
+        font-weight: 600;
+        color: #fff !important;
+    }
+
+    /* Corpi dei toast */
+    .toast-body {
+        color: #fff !important;
+    }
+
+    /* Se vuoi un toast verde pieno */
+    .text-bg-success {
+        background-color: #198754 !important; /* verde pieno */
+        color: #fff !important;
+    }
+
+    /* Pulsante di chiusura in bianco */
+    .toast .btn-close-white {
+        filter: invert(1) brightness(1.2);
+    }
+
 </style>
 
 <div id="report-progress-container" class="d-none">

@@ -120,10 +120,12 @@ namespace AuthServer.Areas.Identity.Pages.Account.Manage
                 throw new InvalidOperationException($"Unexpected error occurred deleting user.");
             }
 
+            // Elimina il cookie di autenticazione dell'IdP
             await _signInManager.SignOutAsync();
 
-            // Dopo la cancellazione, reindirizza alla pagina di login di Identity (non alla home)
-            return RedirectToPage("/Account/Login");
+            // Importante: fai sloggare anche il client (Gateway) così il cookie del client viene invalidato
+            // e il prossimo accesso alla root porta al login.
+            return Redirect("/logout?returnUrl=/");
         }
     }
 }
