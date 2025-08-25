@@ -22,21 +22,45 @@
 				<label asp-for="Input.Email">Email</label>
 				<span asp-validation-for="Input.Email" class="text-danger"></span>
 			</div>
-			<div class="form-floating mb-3">
+			<div class="form-floating mb-2">
 				<input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
 				<label asp-for="Input.Password">Password</label>
 				<span asp-validation-for="Input.Password" class="text-danger"></span>
 			</div>
-			<div class="form-floating mb-3">
+			<div class="form-floating mb-2">
 				<input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
 				<label asp-for="Input.ConfirmPassword">Confirm Password</label>
 				<span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
 			</div>
+            <div class="form-check mb-3">
+                <input class="form-check-input" type="checkbox" id="togglePasswordRegister" />
+                <label class="form-check-label" for="togglePasswordRegister">Mostra password</label>
+            </div>
 			<button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registrati</button>
+
+            <div class="text-center my-2">
+                <span class="text-muted">oppure</span>
+            </div>
+            <div class="mt-3">
+                <a class="w-100 btn btn-lg btn-outline-secondary" asp-page="./Login" asp-route-returnUrl="@Model.ReturnUrl">Vai al Login</a>
+            </div>
 		</form>
 	</div>
 </div>
 
 @section Scripts {
 	<partial name="_ValidationScriptsPartial" />
+	<script>
+		document.addEventListener('DOMContentLoaded', function(){
+			const chk = document.getElementById('togglePasswordRegister');
+			const pwd = document.getElementById('Input_Password');
+			const cpw = document.getElementById('Input_ConfirmPassword');
+			if(chk && pwd && cpw){
+				chk.addEventListener('change', function(){
+					pwd.type = chk.checked ? 'text' : 'password';
+					cpw.type = chk.checked ? 'text' : 'password';
+				});
+			}
+		});
+	</script>
 }
