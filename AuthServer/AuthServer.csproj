@@ -29,6 +29,7 @@
 
   <ItemGroup>
     <Folder Include="keys\" />
+    <Folder Include="Pages\" />
   </ItemGroup>
 
   <ItemGroup>

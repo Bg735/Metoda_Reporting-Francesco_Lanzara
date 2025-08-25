@@ -30,7 +30,9 @@ body {
   text-align: start;
 }
 
-/* ManageNav: rendi attivo 'Elimina account' rosso anziché blu */
+#personal-data{
+    color:red
+}
 #personal-data.nav-link.active,
 .nav-pills .show > #personal-data.nav-link {
   background-color: #dc3545;

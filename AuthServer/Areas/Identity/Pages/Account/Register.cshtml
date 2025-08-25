@@ -2,7 +2,7 @@
 @using AuthServer.Pages.Account
 @model RegisterModel
 @{
-	ViewData["Title"] = "Register";
+	ViewData["Title"] = "Registrati";
 }
 
 <div class="auth position-absolute start-50 translate-middle-x w-100 d-flex justify-content-center" style="top:30%;">
@@ -10,7 +10,7 @@
 		<h1 class="d-flex mb-3 justify-content-center">@ViewData["Title"]</h1>
 		<form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
 			<hr />
-			<h2 class="d-flex justify-content-center">Create a new account.</h2>
+			<h2 class="d-flex justify-content-center">Crea un nuovo account.</h2>
 			<div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
             <div class="form-floating mb-3">
                 <input asp-for="Input.Username" class="form-control" autocomplete="username" aria-required="true" placeholder="username" />
@@ -32,7 +32,7 @@
 				<label asp-for="Input.ConfirmPassword">Confirm Password</label>
 				<span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
 			</div>
-			<button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
+			<button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Registrati</button>
 		</form>
 	</div>
 </div>

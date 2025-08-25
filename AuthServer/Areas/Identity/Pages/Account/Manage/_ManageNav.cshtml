@@ -1,8 +1,25 @@
 @using AuthServer.Areas.Identity.Pages.Account.Manage
 @inject SignInManager<IdentityUser> SignInManager
-<ul class="nav nav-pills flex-column">
-    <li class="nav-item"><a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profilo</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a></li>
-    <li class="nav-item"><a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a></li>
-    <li class="nav-item"><a class="nav-link text @ManageNavPages.DeletePersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./DeletePersonalData">Elimina account</a></li>
-</ul>
+<div class="d-flex flex-column" style="height: 90%;">
+	<ul class="nav nav-pills flex-column d-flex flex-grow-1">
+		<li class="nav-item">
+			<a class="nav-link @ManageNavPages.IndexNavClass(ViewContext)" id="profile" asp-page="./Index">Profilo</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link @ManageNavPages.EmailNavClass(ViewContext)" id="email" asp-page="./Email">Email</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link @ManageNavPages.ChangePasswordNavClass(ViewContext)" id="change-password" asp-page="./ChangePassword">Password</a>
+		</li>
+		<li class="nav-item">
+			<a class="nav-link @ManageNavPages.DeletePersonalDataNavClass(ViewContext)" id="personal-data" asp-page="./DeletePersonalData">Elimina account</a>
+		</li>
+		<!-- Ultimo elemento in fondo: usa il logout centralizzato del Gateway per cancellare anche il cookie client -->
+		<li class="nav-item mt-auto">
+			<form action="/logout" method="post" class="d-grid">
+				<input type="hidden" name="returnUrl" value="/Identity/Account/Login" />
+				<button type="submit" class="btn btn-secondary">Esci</button>
+			</form>
+		</li>
+	</ul>
+</div>

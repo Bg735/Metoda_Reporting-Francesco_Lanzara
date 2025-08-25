@@ -24,11 +24,25 @@ a {
 }
 
 /* Personalizzazione: quando il pulsante 'Elimina account' è attivo, usa rosso */
+#personal-data.nav-link {
+  color: #dc3545;
+}
+
 #personal-data.nav-link.active,
 .nav-pills .show > #personal-data.nav-link {
-  background-color: #dc3545 !important;
-  border-color: #dc3545 !important;
-  color: #fff !important;
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: #fff;
+}
+
+/* Footer stile MVC: fisso in basso con bg-light */
+footer.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: #f8f9fa;
+  border-top: 1px solid rgba(0,0,0,.1);
 }
 
 .border-top {
@@ -48,7 +62,7 @@ button.accept-policy {
 }
 
 .footer {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   width: 100%;
   white-space: nowrap;
@@ -68,4 +82,21 @@ button.accept-policy {
 }
 .navbar .btn-outline-primary {
   border-width: 2px;
+}
+
+/* Gradient buttons for PDF/Excel side-by-side */
+.btn-gradient-pdf {
+  background: linear-gradient(90deg, #0d6efd, #58b483);
+  color: #fff;
+  border: 0;
+}
+
+.btn-gradient-excel {
+  background: linear-gradient(90deg, #58b483, #198754);
+  color: #fff;
+  border: 0;
+}
+
+.btn-gradient-pdf:hover, .btn-gradient-excel:hover {
+  filter: brightness(0.95);
 }
