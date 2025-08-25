@@ -43,7 +43,8 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDefaultIdentity<IdentityUser>(options =>
 {
     options.SignIn.RequireConfirmedAccount = false;
-}).AddEntityFrameworkStores<ApplicationDbContext>();
+}).AddEntityFrameworkStores<ApplicationDbContext>()
+.AddDefaultTokenProviders();
 services.AddDbContext<ApplicationDbContext>(options => options.UseSqlite(connectionString));
 
 // HttpClient per chiamate interne a RestAPI (non esposte dal Gateway)

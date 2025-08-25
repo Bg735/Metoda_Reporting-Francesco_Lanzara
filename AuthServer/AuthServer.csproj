@@ -24,12 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="app.db" CopyToOutputDirectory="PreserveNewest" ExcludeFromSingleFile="true" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="keys\" />
-    <Folder Include="Pages\" />
   </ItemGroup>
 
   <Import Project="..\Globals\Globals.projitems" Label="Shared" />
