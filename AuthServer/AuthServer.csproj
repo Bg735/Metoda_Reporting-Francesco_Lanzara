@@ -32,10 +32,6 @@
     <Folder Include="Pages\" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\UserDocuments\UserDocuments.csproj" />
-  </ItemGroup>
-
   <Import Project="..\Globals\Globals.projitems" Label="Shared" />
 
 </Project>

@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using System.ComponentModel.DataAnnotations;
-using UserDocuments.Services;
+using System.Net.Http.Headers;
+using Microsoft.AspNetCore.Authentication; // add for GetTokenAsync
 
 namespace AuthServer.Areas.Identity.Pages.Account.Manage
 {
@@ -15,18 +16,18 @@ namespace AuthServer.Areas.Identity.Pages.Account.Manage
         private readonly UserManager<IdentityUser> _userManager;
         private readonly SignInManager<IdentityUser> _signInManager;
         private readonly ILogger<DeletePersonalDataModel> _logger;
-        private readonly DocumentStorageService _documentService;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         public DeletePersonalDataModel(
             UserManager<IdentityUser> userManager,
             SignInManager<IdentityUser> signInManager,
             ILogger<DeletePersonalDataModel> logger,
-            DocumentStorageService documentService)
+            IHttpClientFactory httpClientFactory)
         {
             _userManager = userManager;
             _signInManager = signInManager;
             _logger = logger;
-            _documentService = documentService;
+            _httpClientFactory = httpClientFactory;
         }
 
         /// <summary>
@@ -87,12 +88,25 @@ namespace AuthServer.Areas.Identity.Pages.Account.Manage
                 }
             }
 
-            // Prima elimina i documenti e i metadati associati nel microservizio UserDocuments
+            // Richiede a RestAPI (controller interno) la cancellazione di metadati e file documenti
             if (Guid.TryParse(user.Id, out var userGuid))
             {
                 try
                 {
-                    await _documentService.DeleteAllForUserAsync(userGuid);
+                    var client = _httpClientFactory.CreateClient("RestApiInternal");
+
+                    // Propaga l'access token corrente se presente, altrimenti la route è comunque non esposta via Gateway
+                    var accessToken = await HttpContext.GetTokenAsync("access_token");
+                    if (!string.IsNullOrEmpty(accessToken))
+                    {
+                        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);
+                    }
+
+                    var response = await client.PostAsync($"internal/userdocs/{userGuid}/delete-all", content: null);
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("DeleteAllForUser via RestAPI failed with status {StatusCode}", response.StatusCode);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -101,15 +115,12 @@ namespace AuthServer.Areas.Identity.Pages.Account.Manage
             }
 
             var result = await _userManager.DeleteAsync(user);
-            var userId = await _userManager.GetUserIdAsync(user);
             if (!result.Succeeded)
             {
                 throw new InvalidOperationException($"Unexpected error occurred deleting user.");
             }
 
             await _signInManager.SignOutAsync();
-
-            _logger.LogInformation("User with ID '{UserId}' deleted themselves.", userId);
 
             // Dopo la cancellazione, reindirizza alla pagina di login di Identity (non alla home)
             return RedirectToPage("/Account/Login");
