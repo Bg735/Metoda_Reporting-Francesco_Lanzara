@@ -5,41 +5,60 @@
 @using UserDocuments.Models
 
 <style>
-        /* progress bar docked below header, always visible */
-        #report-progress-container {
-            position: fixed;
-            top: 0; /* verrà corretto via JS alla height dell'header */
-            left: 0;
-            right: 0;
-            z-index: 1080;
-            padding: .35rem .75rem;
-            background: linear-gradient(180deg, rgba(248,249,250,0.92), rgba(248,249,250,0.75)); /* vicino a bg-light */
-            backdrop-filter: blur(4px);
-            box-shadow: 0 4px 16px rgba(0,0,0,.12);
-        }
+    /* progress bar docked below header, always visible */
+    #report-progress-container {
+        position: fixed;
+        top: 0; /* verrà corretto via JS alla height dell'header */
+        left: 0;
+        right: 0;
+        z-index: 1080;
+        padding: .35rem .75rem;
+        background: linear-gradient(180deg, rgba(248,249,250,0.92), rgba(248,249,250,0.75)); /* vicino a bg-light */
+        backdrop-filter: blur(4px);
+        box-shadow: 0 4px 16px rgba(0,0,0,.12);
+    }
+
         #report-progress-container .progress {
             height: 12px; /* più sottile e moderna */
             background-color: rgba(0,0,0,.08);
             border-radius: 999px;
             overflow: hidden;
         }
-        #report-progress-bar {
-            background-image: linear-gradient(90deg, #0d6efd, #35a0ff);
-            box-shadow: inset 0 0 6px rgba(255,255,255,.25);
-        }
 
-        /* Bigger checkbox and label */
-        #open-report-row .form-check-input {
-            transform: scale(1.25);
-            transform-origin: left center;
-            margin-right: .5rem;
-        }
-        #open-report-row .form-check-label {
-            font-size: 1.05rem;
+    #report-progress-bar {
+        background-image: linear-gradient(90deg, #0d6efd, #35a0ff);
+        box-shadow: inset 0 0 6px rgba(255,255,255,.25);
+    }
+
+    /* Bigger checkbox and label */
+    #open-report-row .form-check-input {
+        transform: scale(1.25);
+        transform-origin: left center;
+        margin-right: .5rem;
+    }
+
+    #open-report-row .form-check-label {
+        font-size: 1.05rem;
+    }
+
+    /* Gradient button styling to blend PDF->Excel */
+    .btn-gradient-pdf {
+        background: linear-gradient(90deg, #0d6efd, #58b483);
+        color: #fff;
+        border: 0;
+    }
+
+    .btn-gradient-excel {
+        background: linear-gradient(90deg, #58b483, #146c43);
+        color: #fff;
+        border: 0;
+    }
+
+        .btn-gradient-pdf:hover, .btn-gradient-excel:hover {
+            filter: brightness(0.95);
         }
 </style>
 
-<!-- Progress bar under header only for this page -->
 <div id="report-progress-container" class="d-none">
     <div class="progress rounded-pill shadow-sm w-100">
         <div id="report-progress-bar" class="progress-bar progress-bar-striped progress-bar-animated"
@@ -47,9 +66,8 @@
     </div>
 </div>
 
-<!-- Toast only for this page -->
-<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1080">
-    <div id="report-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+<div class="toast-container position-fixed top-0 start-0 p-3" style="z-index: 1080">
+    <div id="report-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
         <div class="d-flex">
             <div class="toast-body">
                 <strong class="toast-title me-2">Report pronto</strong>
@@ -85,9 +103,9 @@
             var reports = DocumentContent.All;
             var formats = new[]
             {
-                new { Label = "PDF", Ext = "pdf", Css = "btn-primary" },
-                new { Label = "Excel", Ext = "xlsm", Css = "btn-success" }
-            };
+                new { Label = "PDF", Ext = "pdf", Css = "btn-gradient-pdf" },
+                new { Label = "Excel", Ext = "xlsm", Css = "btn-gradient-excel" }
+                };
         }
         @foreach (var report in reports)
         {
@@ -95,7 +113,7 @@
                 <div class="card shadow-sm h-100 d-flex flex-column">
                     <div class="card-body d-flex flex-column">
                         <h5 class="card-title">@report.Title</h5>
-                        <div class="mt-auto d-flex justify-content-center gap-2">
+                        <div class="mt-auto d-flex justify-content-center gap-0">
                             @foreach (var format in formats)
                             {
                                 <form class="report-form" asp-controller="Home" asp-action="Index" method="post">
@@ -103,13 +121,13 @@
                                     <input type="hidden" name="docCategory" value="@report.ApiName" />
                                     <input type="hidden" name="format" value="@format.Ext" />
                                     <input type="hidden" name="openReport" value="false" />
-                                    <button type="submit" class="btn @format.Css px-5">@format.Label</button>
+                                    <button type="submit" class="btn me-2 @format.Css px-5">@format.Label</button>
                                 </form>
                             }
                         </div>
                     </div>
                 </div>
-            </div>  
+            </div>
 
         }
     </div>
@@ -138,7 +156,7 @@
             const forms = document.querySelectorAll('form.report-form');
 
             function persistPreference(checked){
-                fetch('@Url.Action("SetOpenPreference","Home")', {
+                fetch('@Url.Action("SetOpenPreference", "Home")', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/x-www-form-urlencoded',

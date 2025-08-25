@@ -8,6 +8,7 @@ using System.Net.Http.Headers;
 using Yarp.ReverseProxy.Transforms;
 using IdentityModel.Client;
 using System.Globalization;
+using System.IdentityModel.Tokens.Jwt; // new: to read JWT and check issuer
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -46,7 +47,8 @@ builder.Services.AddAuthentication(options =>
 })
 .AddOpenIdConnect(options =>
 {
-    options.Authority = "http://localhost:8080";
+    // Usa sempre l'authority del container per discovery/issuer
+    options.Authority = "http://authserver:8080";
     options.RequireHttpsMetadata = false;
     options.MetadataAddress = "http://authserver:8080/.well-known/openid-configuration";
     options.ClientId = "mvcclient";
@@ -66,6 +68,7 @@ builder.Services.AddAuthentication(options =>
     };
     options.Events = new OpenIdConnectEvents
     {
+        // UI redirects devono andare su localhost
         OnRedirectToIdentityProvider = ctx =>
         {
             if (!string.IsNullOrEmpty(ctx.ProtocolMessage.IssuerAddress))
@@ -130,7 +133,7 @@ static bool IsInteractiveRequest(HttpContext ctx)
     return accept.Any(a => a.Contains("text/html", StringComparison.OrdinalIgnoreCase));
 }
 
-// Refresh automatico dell’access token (robustezza su expires_at)
+// Refresh automatico dell’access token (robustezza su expires_at e issuer non allineato)
 app.Use(async (ctx, next) =>
 {
     var path = ctx.Request.Path.Value ?? string.Empty;
@@ -153,6 +156,26 @@ app.Use(async (ctx, next) =>
         else
         {
             needsRefresh = expUtc <= DateTimeOffset.UtcNow.AddMinutes(1);
+        }
+
+        // Nuovo: forza refresh se l'issuer del token non è quello atteso (residui di una configurazione precedente)
+        var at = await ctx.GetTokenAsync("access_token");
+        if (!string.IsNullOrEmpty(at))
+        {
+            try
+            {
+                var jwt = new JwtSecurityTokenHandler().ReadJwtToken(at);
+                var iss = jwt.Issuer;
+                if (!string.Equals(iss, "http://authserver:8080", StringComparison.OrdinalIgnoreCase))
+                {
+                    needsRefresh = true;
+                }
+            }
+            catch
+            {
+                // token malformato -> tenta refresh
+                needsRefresh = true;
+            }
         }
 
         if (needsRefresh)

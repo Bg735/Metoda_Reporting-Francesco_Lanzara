@@ -58,8 +58,11 @@ var mvcClientSecret = builder.Configuration["IdentityServer:Clients:mvcclient:Se
 // Config IdentityServer (token e refresh token)
 services.AddIdentityServer(options =>
 {
-    options.IssuerUri = Utils.Domain.Root;
+    // Allinea l'issuer a quello usato dagli altri servizi (RestAPI, Gateway)
+    options.IssuerUri = "http://authserver:8080";
 })
+// Persisti la chiave di firma per evitare rotazioni ad ogni riavvio (evita 401 per chiavi non trovate)
+.AddDeveloperSigningCredential(persistKey: true)
 .AddInMemoryClients(
 [
     new Client

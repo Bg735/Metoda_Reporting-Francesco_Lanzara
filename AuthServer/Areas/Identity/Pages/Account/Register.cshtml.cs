@@ -18,6 +18,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using Global;
 
 namespace AuthServer.Pages.Account
 {
@@ -131,11 +132,11 @@ namespace AuthServer.Pages.Account
                 {
                     _logger.LogInformation("User created a new account with password.");
 
-                    // Se non è richiesta la conferma email, esegui il login e reindirizza alla home
+                    // Se non è richiesta la conferma email, esegui il login e reindirizza alla home del client MVC (Gateway)
                     if (!_userManager.Options.SignIn.RequireConfirmedAccount)
                     {
                         await _signInManager.SignInAsync(user, isPersistent: false);
-                        return LocalRedirect(returnUrl);
+                        return Redirect(Utils.Domain.Root);
                     }
 
                     var userId = await _userManager.GetUserIdAsync(user);
